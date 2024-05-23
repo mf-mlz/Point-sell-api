@@ -15,7 +15,7 @@ const verifyPassword = async (plainPassword, storedHash) => {
         const result = await bcrypt.compare(plainPassword, storedHash);
         return result;
     } catch (err) {
-        throw new Error('Error al verificar la contraseña');
+        throw new Error('Error al verificar la contraseña Service');
     }
 };
 
