@@ -1,5 +1,10 @@
 const clientRepository = require('../repositories/clientRepository');
 
-exports.getAllClients = () => {
+const getAllClients = () => {
     return clientRepository.getAllClients();
 };
+
+
+module.exports = {
+    getAllClients
+}
