@@ -31,14 +31,25 @@ const registerEmployees = async (req, res) => {
     }
 };
 
-const getEmployee = async (data) => {
+const filterEmployees = async (req, res) => {
+
+
+    const data = req.body;
     try {
-        const employee = await employeesService.getEmployee(data);
-        return employee;
-    } catch (error) {
-        return error;
+
+        delete data.employeeId;
+        const employeeData = await employeesService.getEmployee(data);
+        if (employeeData.length > 0) {
+            res.status(401).json({ message: `Se encontraron ${employeeData.length} registros`, employee: employeeData });
+
+        }else{
+            res.status(401).json({ message: `No se encontraron registros` });
+        }
+
+    } catch (err) {
+        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
     }
-}
+};
 
 const loginEmployees = async (req, res) => {
     const requiredFields = ['email', 'password'];
@@ -54,10 +65,9 @@ const loginEmployees = async (req, res) => {
     try {
 
         const searchData = { email: email };
+        const employeeData = await employeesService.getEmployee(searchData);
 
-        const employeeData = await getEmployee(searchData);
-
-        if (Object.keys(employeeData[0]).length > 0) {
+        if (employeeData.length > 0) {
 
             const verifyPassword = await passwordService.verifyPassword(password, employeeData[0].password);
             if (verifyPassword) {
@@ -100,5 +110,5 @@ module.exports = {
     getAllEmployees,
     registerEmployees,
     loginEmployees,
-    getEmployee
+    filterEmployees
 };

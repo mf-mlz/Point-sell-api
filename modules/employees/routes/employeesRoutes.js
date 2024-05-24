@@ -8,5 +8,6 @@ router.get('/', verifyToken, employeesController.getAllEmployees);
 
 router.post('/register', employeesController.registerEmployees);
 router.post('/login', employeesController.loginEmployees);
+router.post('/filter', verifyToken, employeesController.filterEmployees);
 
 module.exports = router;
