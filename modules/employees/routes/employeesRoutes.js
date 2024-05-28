@@ -9,6 +9,6 @@ router.get('/', verifyToken, employeesController.getAllEmployees);
 router.post('/register', employeesController.registerEmployees);
 router.post('/login', employeesController.loginEmployees);
 router.post('/filter', verifyToken, employeesController.filterEmployees);
-router.post('/edit', verifyToken, employeesController.putEmployees);
+router.put('/edit', verifyToken, employeesController.putEmployees);
 
 module.exports = router;
