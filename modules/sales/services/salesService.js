@@ -12,8 +12,18 @@ const getAllSales = () => {
     return salesRepository.getAllSales();
 };
 
+const putSale = (sale) => {
+    return salesRepository.putSale(sale);
+};
+
+const deleteSale = (sale) => {
+    return salesRepository.deleteSale(sale);
+};
+
 module.exports = {
     registerSales,
     getAllSales,
-    getSale
+    getSale,
+    putSale,
+    deleteSale
 };

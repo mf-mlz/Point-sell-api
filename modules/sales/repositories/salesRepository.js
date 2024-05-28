@@ -51,8 +51,38 @@ const getSale = (data) => {
     });
 };
 
+const putSale = (sale) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE sales SET date= ?, totalAmount= ?, customerId= ?, employeesId= ?, status= ?, updated_at= ? WHERE id = ?';
+        const values = [sale.date, sale.totalAmount, sale.customerId, sale.employeesId, sale.status, sale.updated_at, sale.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Venta Modificada Correctamente');
+        });
+
+    });
+};
+
+const deleteSale = (employee) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'DELETE FROM sales WHERE id= ?';
+        const values = [employee.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Venta Eliminada Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerSales,
     getAllSales,
-    getSale
+    getSale,
+    putSale,
+    deleteSale
 };

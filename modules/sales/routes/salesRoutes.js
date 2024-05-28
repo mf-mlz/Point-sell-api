@@ -9,4 +9,8 @@ router.get('/', verifyToken, salesController.getAllSales);
 router.post('/register', verifyToken, salesController.registerSales);
 router.post('/filter', verifyToken, salesController.filterSales);
 
+router.put('/edit', verifyToken, salesController.putSale);
+
+router.delete('/delete', verifyToken, salesController.deleteSale);
+
 module.exports = router;
