@@ -7,5 +7,6 @@ router.get('/', verifyToken, clientController.getAllClients);
 
 router.post('/register', verifyToken, clientController.registerClients);
 router.get('/filter', verifyToken, clientController.filterClients);
+router.put('/edit', verifyToken, clientController.putClients);
 
 module.exports = router;

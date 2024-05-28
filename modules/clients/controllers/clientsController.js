@@ -1,5 +1,5 @@
 const clientsService = require('../services/clientService');
-const { verifyData } = require('../../../utils/helpers');
+const { verifyData,createUpdatetAt } = require('../../../utils/helpers');
 
 const registerClients = async (req, res) => {
 
@@ -13,7 +13,7 @@ const registerClients = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    // const { name, email, phone, address } = data;
+    const { name, email, phone, address } = data;
 
     try {
 
@@ -54,8 +54,32 @@ const getAllClients = async (req, res) => {
     }
 };
 
+const putClients = async (req, res) => {
+
+    const requiredFields = ['id', 'name', 'email', 'phone', 'address'];
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id, name, email, phone, address, role_id } = data;
+
+    try {
+        data.updated_at = createUpdatetAt();
+
+        const registerClientsServices = await clientsService.putClients(data);
+        res.status(201).json({ message: registerClientsServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 module.exports = {
     registerClients,
     getAllClients,
-    filterClients
+    filterClients,
+    putClients
 }

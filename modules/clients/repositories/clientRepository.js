@@ -49,8 +49,23 @@ const getClient = (data) => {
     });
 };
 
+const putClients = (client) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE clients SET name= ?, email= ?, phone= ?, address= ?, updated_at= ? WHERE id= ?;';
+        const values = [client.name, client.email, client.phone, client.address, client.updated_at, client.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Cliente Modificado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerClients,
     getAllClients,
-    getClient
+    getClient,
+    putClients
 }
