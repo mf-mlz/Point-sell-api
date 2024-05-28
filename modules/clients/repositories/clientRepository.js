@@ -1,5 +1,18 @@
 const connection = require('../../../config/database');
 
+const registerClients = (client) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO clients (name, email, phone, address) VALUES (?, ?, ?, ?)';
+        const values = [client.name, client.email, client.phone, client.address];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Cliente Registrado Correctamente');
+        });
+
+    });
+};
+
 const getAllClients = () => {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM clients', (error, results) => {
@@ -36,9 +49,8 @@ const getClient = (data) => {
     });
 };
 
-
-
 module.exports = {
+    registerClients,
     getAllClients,
     getClient
 }

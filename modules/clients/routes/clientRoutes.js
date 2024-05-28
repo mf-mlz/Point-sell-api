@@ -4,6 +4,8 @@ const clientController = require('../controllers/clientsController');
 const { verifyToken } = require('../../../middleware/authMiddleware');
 
 router.get('/', verifyToken, clientController.getAllClients);
+
+router.post('/register', verifyToken, clientController.registerClients);
 router.get('/filter', verifyToken, clientController.filterClients);
 
 module.exports = router;
