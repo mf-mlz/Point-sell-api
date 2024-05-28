@@ -2,8 +2,8 @@ const connection = require('../../../config/database');
 
 const registerEmployees = (employee) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO employees (name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)';
-        const values = [employee.name, employee.email, employee.password, employee.phone, employee.address];
+        const query = 'INSERT INTO employees (name, email, password, phone, address, role_id) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [employee.name, employee.email, employee.password, employee.phone, employee.address, employee.role_id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -50,8 +50,25 @@ const getEmployee = (data) => {
     });
 };
 
+
+const putEmployees = (employee) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE employees SET name= ?, email= ?, password= ?, phone= ?, address= ?, updated_at= ?, role_id= ? WHERE id= ?';
+        const values = [employee.name, employee.email, employee.password, employee.phone, employee.address, employee.updated_at, employee.role_id, employee.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Usuario Modificado Correctamente');
+        });
+
+    });
+};
+
+
 module.exports = {
     getAllEmployees,
     registerEmployees,
-    getEmployee
+    getEmployee,
+    putEmployees
 };

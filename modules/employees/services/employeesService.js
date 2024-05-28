@@ -11,8 +11,13 @@ const getEmployee = (data) => {
     return employeesRepository.getEmployee(data);
 };
 
+const putEmployees = (data) => {
+    return employeesRepository.putEmployees(data);
+};
+
 module.exports = {
     registerEmployees,
     getAllEmployees,
-    getEmployee
+    getEmployee,
+    putEmployees
 };
