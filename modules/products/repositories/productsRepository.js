@@ -1,5 +1,18 @@
 const connection = require('../../../config/database');
 
+const registerProducts = (product) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO products (name, description, price, category, stock, photo) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [product.name, product.description, product.price, product.category, product.stock, product.photo];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Producto Registrado Correctamente');
+        });
+
+    });
+};
+
 const getAllProducts = () => {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM products', (error, results) => {
@@ -39,6 +52,7 @@ const getProduct = (data) => {
 };
 
 module.exports = {
+    registerProducts,
     getAllProducts,
     getProduct
 };
