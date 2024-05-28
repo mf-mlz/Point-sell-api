@@ -1,6 +1,6 @@
 const employeesService = require('../services/employeesService');
 const passwordService = require('../services/passwordService');
-const { verifyData } = require('../../../utils/helpers');
+const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
@@ -8,7 +8,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const registerEmployees = async (req, res) => {
 
-    const requiredFields = ['name', 'email', 'password', 'phone', 'address'];
+    const requiredFields = ['name', 'email', 'password', 'phone', 'address', 'role_id'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
@@ -16,7 +16,7 @@ const registerEmployees = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { name, email, password, phone, address } = data;
+    const { name, email, password, phone, address, role_id } = data;
 
     try {
 
@@ -106,9 +106,61 @@ const getAllEmployees = async (req, res) => {
     }
 };
 
+const putEmployees = async (req, res) => {
+
+    const requiredFields = ['id', 'name', 'email', 'password', 'phone', 'address', 'role_id'];
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id, name, email, password, phone, address, role_id } = data;
+
+    try {
+
+        const hashedPassword = await passwordService.hashPassword(password);
+        data.password = hashedPassword;
+        data.updated_at = createUpdatetAt();
+
+        const registerEmployeesServices = await employeesService.putEmployees(data);
+        res.status(201).json({ message: registerEmployeesServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+const deleteEmployee = async (req, res) => {
+
+    const requiredFields = ['id'];
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id } = data;
+
+    try {
+
+        const deleteEmployeeServices = await employeesService.deleteEmployee(data);
+        res.status(201).json({ message: deleteEmployeeServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+
+
 module.exports = {
     getAllEmployees,
     registerEmployees,
     loginEmployees,
-    filterEmployees
+    filterEmployees,
+    putEmployees,
+    deleteEmployee
 };
