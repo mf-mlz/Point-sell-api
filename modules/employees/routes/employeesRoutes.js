@@ -10,5 +10,6 @@ router.post('/register', employeesController.registerEmployees);
 router.post('/login', employeesController.loginEmployees);
 router.post('/filter', verifyToken, employeesController.filterEmployees);
 router.put('/edit', verifyToken, employeesController.putEmployees);
+router.delete('/delete', verifyToken, employeesController.deleteEmployee);
 
 module.exports = router;

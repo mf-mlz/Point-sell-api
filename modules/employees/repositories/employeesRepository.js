@@ -65,10 +65,25 @@ const putEmployees = (employee) => {
     });
 };
 
+const deleteEmployee = (employee) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'DELETE FROM employees WHERE id= ?';
+        const values = [employee.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Usuario Eliminado Correctamente');
+        });
+
+    });
+};
+
 
 module.exports = {
     getAllEmployees,
     registerEmployees,
     getEmployee,
-    putEmployees
+    putEmployees,
+    deleteEmployee
 };
