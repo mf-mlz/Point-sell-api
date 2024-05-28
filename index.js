@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const clientsRoutes = require('./modules/clients/routes/clientRoutes');
 const employeesRoutes = require('./modules/employees/routes/employeesRoutes');
+const salesRoutes = require('./modules/sales/routes/salesRoutes');
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 app.use('/api/clients', clientsRoutes);
 app.use('/api/employees', employeesRoutes);
+app.use('/api/sales', salesRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
