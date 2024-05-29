@@ -27,6 +27,25 @@ const registerSalesProducts = async (req, res) => {
     }
 };
 
+const filterSalesProducts = async (req, res) => {
+
+    const data = req.body;
+    try {
+        delete data.employeeId;
+        const salesData = await salesProductsService.getSalesProducts(data);
+        if (salesData.length > 0) {
+            res.status(401).json({ message: `Se encontraron ${salesData.length} registros`, sales: salesData });
+
+        } else {
+            res.status(401).json({ message: `No se encontraron registros` });
+        }
+
+    } catch (err) {
+        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
+    }
+
+};
+
 const getAllSalesProducts = async (req, res) => {
     try {
         const salesProducts = await salesProductsService.getAllSalesProducts();
@@ -38,5 +57,6 @@ const getAllSalesProducts = async (req, res) => {
 
 module.exports = {
     registerSalesProducts,
+    filterSalesProducts,
     getAllSalesProducts
 };
