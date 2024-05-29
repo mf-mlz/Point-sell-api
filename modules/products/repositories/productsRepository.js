@@ -65,9 +65,24 @@ const putProducts = (product) => {
     });
 };
 
+const deleteProduct = (employee) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'DELETE FROM products WHERE id= ?';
+        const values = [employee.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Usuario Eliminado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerProducts,
     getAllProducts,
     getProduct,
-    putProducts
+    putProducts,
+    deleteProduct
 };
