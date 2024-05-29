@@ -7,5 +7,6 @@ router.get('/', verifyToken, productsController.getAllProducts);
 
 router.post('/register', verifyToken, productsController.registerProducts);
 router.get('/filter', verifyToken, productsController.filterProducts);
+router.put('/edit', verifyToken, productsController.putProducts);
 
 module.exports = router;

@@ -51,8 +51,23 @@ const getProduct = (data) => {
     });
 };
 
+const putProducts = (product) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE products SET name= ?, description= ?, price= ?, category= ?, stock= ?, photo= ?, updated_at= ? WHERE id= ?';
+        const values = [product.name, product.description, product.price, product.category, product.stock, product.photo, product.updated_at, product.id];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Producto Modificado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerProducts,
     getAllProducts,
-    getProduct
+    getProduct,
+    putProducts
 };

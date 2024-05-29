@@ -1,5 +1,5 @@
 const productsService = require('../services/productsService');
-const { verifyData } = require('../../../utils/helpers');
+const { verifyData,createUpdatetAt } = require('../../../utils/helpers');
 
 const registerProducts = async (req, res) => {
 
@@ -51,8 +51,34 @@ const getAllProducts = async (req, res) => {
     }
 };
 
+const putProducts = async (req, res) => {
+
+    const requiredFields = ['id', 'name', 'description', 'price', 'category', 'stock', 'photo'];
+
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id, name, email, password, phone, address, role_id } = data;
+
+    try {
+
+        data.updated_at = createUpdatetAt();
+
+        const registerProductsServices = await productsService.putProducts(data);
+        res.status(201).json({ message: registerProductsServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 module.exports = {
     registerProducts,
     getAllProducts,
-    filterProducts
+    filterProducts,
+    putProducts
 };
