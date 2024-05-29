@@ -52,8 +52,23 @@ const getAllSalesProducts = () => {
     });
 };
 
+const putSalesProducts = (salesProducts) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE sales_products SET salesId= ?, productId= ?, quantity= ?, price= ? WHERE id = ?';
+        const values = [salesProducts.salesId, salesProducts.productId, salesProducts.quantity, salesProducts.price, salesProducts.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Venta Modificada Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
-    getAllSalesProducts
+    getAllSalesProducts,
+    putSalesProducts
 };

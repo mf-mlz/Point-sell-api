@@ -12,8 +12,13 @@ const getAllSalesProducts = () => {
     return salesProductsRepository.getAllSalesProducts();
 };
 
+const putSalesProducts = (sale) => {
+    return salesProductsRepository.putSalesProducts(sale);
+};
+
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
-    getAllSalesProducts
+    getAllSalesProducts,
+    putSalesProducts
 };

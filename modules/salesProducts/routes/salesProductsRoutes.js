@@ -9,4 +9,6 @@ router.get('/', verifyToken, salesProductsController.getAllSalesProducts);
 router.post('/register', verifyToken, salesProductsController.registerSalesProducts);
 router.post('/filter', verifyToken, salesProductsController.filterSalesProducts);
 
+router.put('/edit', verifyToken, verifyAdminRole, salesProductsController.putSalesProducts);
+
 module.exports = router;
