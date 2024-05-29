@@ -6,4 +6,6 @@ const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
 
 router.get('/', verifyToken, salesProductsController.getAllSalesProducts);
 
+router.post('/register', verifyToken, salesProductsController.registerSalesProducts);
+
 module.exports = router;
