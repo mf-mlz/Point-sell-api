@@ -16,9 +16,14 @@ const putClients = (data) => {
     return clientsRepository.putClients(data);
 };
 
+const deleteClient = (data) => {
+    return clientsRepository.deleteClient(data);
+};
+
 module.exports = {
     registerClients,
     getAllClients, 
     getClient,
-    putClients
+    putClients,
+    deleteClient
 }

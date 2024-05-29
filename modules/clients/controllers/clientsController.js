@@ -67,6 +67,8 @@ const putClients = async (req, res) => {
     const { id, name, email, phone, address, role_id } = data;
 
     try {
+        
+        delete data.employeeId;
         data.updated_at = createUpdatetAt();
 
         const registerClientsServices = await clientsService.putClients(data);
@@ -77,9 +79,33 @@ const putClients = async (req, res) => {
     }
 };
 
+const deleteClient = async (req, res) => {
+
+    const requiredFields = ['id'];
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id } = data;
+
+    try {
+
+        delete data.employeeId;
+        const deleteClientServices = await clientsService.deleteClient(data);
+        res.status(201).json({ message: deleteClientServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 module.exports = {
     registerClients,
     getAllClients,
     filterClients,
-    putClients
+    putClients,
+    deleteClient
 }

@@ -63,9 +63,23 @@ const putClients = (client) => {
     });
 };
 
+const deleteClient = (client) => {
+    return new Promise((resolve, reject) => {
+        const query = 'DELETE FROM clients WHERE id= ?';
+        const values = [client.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Usuario Eliminado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     registerClients,
     getAllClients,
     getClient,
-    putClients
+    putClients,
+    deleteClient
 }
