@@ -11,4 +11,6 @@ router.post('/filter', verifyToken, salesProductsController.filterSalesProducts)
 
 router.put('/edit', verifyToken, verifyAdminRole, salesProductsController.putSalesProducts);
 
+router.delete('/delete', verifyToken, verifyAdminRole, salesProductsController.deleteSalesProducts);
+
 module.exports = router;

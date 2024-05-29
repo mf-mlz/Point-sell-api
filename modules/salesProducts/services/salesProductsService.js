@@ -16,9 +16,15 @@ const putSalesProducts = (sale) => {
     return salesProductsRepository.putSalesProducts(sale);
 };
 
+const deleteSalesProducts = (sale) => {
+    return salesProductsRepository.deleteSalesProducts(sale);
+};
+
+
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
     getAllSalesProducts,
-    putSalesProducts
+    putSalesProducts,
+    deleteSalesProducts
 };

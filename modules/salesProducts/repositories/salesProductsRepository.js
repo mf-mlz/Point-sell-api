@@ -66,9 +66,25 @@ const putSalesProducts = (salesProducts) => {
     });
 };
 
+const deleteSalesProducts = (salesProducts) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'DELETE FROM sales_products WHERE id= ?';
+        const values = [salesProducts.id ];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Venta Eliminada Correctamente');
+        });
+
+    });
+};
+
+
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
     getAllSalesProducts,
-    putSalesProducts
+    putSalesProducts,
+    deleteSalesProducts
 };
