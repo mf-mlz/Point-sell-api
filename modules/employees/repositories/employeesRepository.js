@@ -30,7 +30,7 @@ const getEmployee = (data) => {
         Object.entries(data).forEach(([key, value]) => {
 
             values.push(value);
-            keys += key + " = ? OR ";
+            keys += 'employees.'+key + " = ? OR ";
         });
 
         keys = keys.trim();
@@ -38,9 +38,9 @@ const getEmployee = (data) => {
         if (keys.endsWith('OR')) {
             keys = keys.substring(0, keys.length - 2);
         }
-
-        const query = 'SELECT * FROM employees WHERE ' + keys + "";
-
+        
+        const query = 'SELECT employees.*, roles.name as role_name FROM employees INNER JOIN roles ON employees.role_id = roles.id  WHERE ' + keys + "";
+        
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
             const result = JSON.parse(JSON.stringify(results));
