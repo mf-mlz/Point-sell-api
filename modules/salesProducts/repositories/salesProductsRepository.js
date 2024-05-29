@@ -3,8 +3,8 @@ const connection = require('../../../config/database');
 const registerSalesProducts = (saleProducts) => {
     return new Promise((resolve, reject) => {
 
-        const query = 'INSERT INTO sales_products (salesId, productId, quantity, price) VALUES (?, ?, ?, ?)';
-        const values = [saleProducts.salesId, saleProducts.productId, saleProducts.quantity, saleProducts.price];
+        const query = 'INSERT INTO sales_products (salesId, productId, quantity, total) VALUES (?, ?, ?, ?)';
+        const values = [saleProducts.salesId, saleProducts.productId, saleProducts.quantity, saleProducts.total];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -55,8 +55,8 @@ const getAllSalesProducts = () => {
 const putSalesProducts = (salesProducts) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE sales_products SET salesId= ?, productId= ?, quantity= ?, price= ? WHERE id = ?';
-        const values = [salesProducts.salesId, salesProducts.productId, salesProducts.quantity, salesProducts.price, salesProducts.id ];
+        const query = 'UPDATE sales_products SET salesId= ?, productId= ?, quantity= ?, total= ?, updated_at= ?  WHERE id = ?';
+        const values = [salesProducts.salesId, salesProducts.productId, salesProducts.quantity, salesProducts.total, salesProducts.updated_at, salesProducts.id ];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
