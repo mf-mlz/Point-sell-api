@@ -1,5 +1,7 @@
 const productsService = require('../services/productsService');
 const { verifyData,createUpdatetAt } = require('../../../utils/helpers');
+const fs = require('fs');
+const path = require('path');
 
 const registerProducts = async (req, res) => {
 
@@ -22,6 +24,14 @@ const registerProducts = async (req, res) => {
     }
 };
 
+const uploadPhoto = async (req, res) => {
+    try {
+        res.status(200).json({ message: 'Archivo Subido con Éxito' });
+    } catch (err) {
+        res.status(500).json({ error: err });
+    }
+
+}
 
 const filterProducts = async (req, res) => {
 
@@ -102,6 +112,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
     registerProducts,
+    uploadPhoto,
     getAllProducts,
     filterProducts,
     putProducts,

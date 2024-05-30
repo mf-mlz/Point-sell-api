@@ -67,3 +67,6 @@ debug/
 
 # Ignore test coverage
 /coverage
+
+#Ignore Files
+uploads/
