@@ -3,14 +3,15 @@ const router = express.Router();
 const employeesController = require('../controllers/employeesController');
 const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
+const { validateEmployee, validateEmployeeFilter, validateID } = require('../../../middlewares/validatorsEmployees');
 
 
 router.get('/', verifyToken, employeesController.getAllEmployees);
 
-router.post('/register', employeesController.registerEmployees);
+router.post('/register', verifyToken, verifyAdminRole, validateEmployee, employeesController.registerEmployees);
 router.post('/login', employeesController.loginEmployees);
-router.post('/filter', verifyToken, employeesController.filterEmployees);
-router.put('/edit', verifyToken, verifyAdminRole, employeesController.putEmployees);
-router.delete('/delete', verifyToken, verifyAdminRole, employeesController.deleteEmployee);
+router.post('/filter', verifyToken, validateEmployeeFilter, employeesController.filterEmployees);
+router.put('/edit', verifyToken, verifyAdminRole, validateID, validateEmployee, employeesController.putEmployees);
+router.delete('/delete', verifyToken, verifyAdminRole, validateID, employeesController.deleteEmployee);
 
 module.exports = router;
