@@ -8,6 +8,10 @@ const getSalesProducts = (data) => {
     return salesProductsRepository.getSalesProducts(data);
 };
 
+const getSalesJoinProducts = (data) => {
+    return salesProductsRepository.getSalesJoinProducts(data);
+};
+
 const getAllSalesProducts = () => {
     return salesProductsRepository.getAllSalesProducts();
 };
@@ -24,6 +28,7 @@ const deleteSalesProducts = (sale) => {
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
+    getSalesJoinProducts,
     getAllSalesProducts,
     putSalesProducts,
     deleteSalesProducts

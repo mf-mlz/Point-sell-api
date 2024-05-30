@@ -43,6 +43,35 @@ const getSalesProducts = (data) => {
     });
 };
 
+const getSalesJoinProducts = (data) => {
+    return new Promise((resolve, reject) => {
+
+        let keys = "";
+        let values = [];
+
+        Object.entries(data).forEach(([key, value]) => {
+
+            values.push(value);
+            keys += "sales_products."+key + " = ? OR ";
+        });
+
+        keys = keys.trim();
+
+        if (keys.endsWith('OR')) {
+            keys = keys.substring(0, keys.length - 2);
+        }
+
+        const query = 'SELECT sales_products.quantity, products.price, products.key_sat, key_products_sat.descripcion FROM sales_products INNER JOIN products ON sales_products.productId = products.id INNER JOIN key_products_sat ON products.key_sat = key_products_sat.clave WHERE ' + keys + "";
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            const result = JSON.parse(JSON.stringify(results));
+            resolve(result);
+        });
+
+    });
+};
+
 const getAllSalesProducts = () => {
     return new Promise((resolve, reject) => {
         connection.query('SELECT * FROM sales_products', (error, results) => {
@@ -84,6 +113,7 @@ const deleteSalesProducts = (salesProducts) => {
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
+    getSalesJoinProducts,
     getAllSalesProducts,
     putSalesProducts,
     deleteSalesProducts

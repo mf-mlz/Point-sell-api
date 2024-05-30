@@ -1,7 +1,7 @@
 const invoicesRepository = require('../repositories/invoicesRepository');
 
-const createInvoice = () => {
-    return invoicesRepository.createInvoice();
+const createInvoice = (invoiceData) => {
+    return invoicesRepository.createInvoice(invoiceData);
 };
 
 module.exports = {
