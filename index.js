@@ -5,6 +5,7 @@ const employeesRoutes = require('./modules/employees/routes/employeesRoutes');
 const productsRoutes = require('./modules/products/routes/productsRoutes');
 const salesRoutes = require('./modules/sales/routes/salesRoutes');
 const salesProductsRoutes = require('./modules/salesProducts/routes/salesProductsRoutes');
+const invoicesRoutes = require('./modules/invoices/routes/invoicesRoutes');
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use('/api/employees', employeesRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/salesproducts', salesProductsRoutes);
+app.use('/api/invoices', invoicesRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
