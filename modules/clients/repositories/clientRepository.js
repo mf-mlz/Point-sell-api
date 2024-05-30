@@ -2,8 +2,8 @@ const connection = require('../../../config/database');
 
 const registerClients = (client) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO clients (name, email, phone, address, tax_id, tax_system) VALUES (?, ?, ?, ?, ?, ?)';
-        const values = [client.name, client.email, client.phone, client.address, client.tax_id, client.tax_system];
+        const query = 'INSERT INTO clients (name, email, phone, address, zip, tax_id, tax_system) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        const values = [client.name, client.email, client.phone, client.address, client.zip, client.tax_id, client.tax_system];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -52,8 +52,8 @@ const getClient = (data) => {
 const putClients = (client) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE clients SET name= ?, email= ?, phone= ?, address= ?, tax_id= ?, tax_system= ?, updated_at= ? WHERE id= ?;';
-        const values = [client.name, client.email, client.phone, client.address, client.tax_id, client.tax_system, client.updated_at, client.id];
+        const query = 'UPDATE clients SET name= ?, email= ?, phone= ?, address= ?, zip= ? tax_id= ?, tax_system= ?, updated_at= ? WHERE id= ?;';
+        const values = [client.name, client.email, client.phone, client.address, client.zip, client.tax_id, client.tax_system, client.updated_at, client.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
