@@ -1,9 +1,9 @@
 const clientsService = require('../services/clientService');
-const { verifyData,createUpdatetAt } = require('../../../utils/helpers');
+const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 
 const registerClients = async (req, res) => {
 
-    const requiredFields = ['name', 'email', 'phone', 'address'];
+    const requiredFields = ['name', 'email', 'phone', 'address', 'tax_id', 'tax_system'];
     const data = req.body;
     delete data.employeeId;
 
@@ -13,7 +13,7 @@ const registerClients = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { name, email, phone, address } = data;
+    const { name, email, phone, address, tax_id, tax_system } = data;
 
     try {
 
@@ -56,7 +56,7 @@ const getAllClients = async (req, res) => {
 
 const putClients = async (req, res) => {
 
-    const requiredFields = ['id', 'name', 'email', 'phone', 'address'];
+    const requiredFields = ['id', 'name', 'email', 'phone', 'address', 'tax_id', 'tax_system'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
@@ -64,10 +64,10 @@ const putClients = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { id, name, email, phone, address, role_id } = data;
+    const { id, name, email, phone, address, tax_id, tax_system, role_id } = data;
 
     try {
-        
+
         delete data.employeeId;
         data.updated_at = createUpdatetAt();
 
