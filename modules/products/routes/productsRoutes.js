@@ -11,10 +11,8 @@ router.get('/filter', verifyToken, productsController.filterProducts);
 router.post('/register', verifyToken, verifyAdminRole, productsController.registerProducts);
 router.post('/upload', upload.single('photo'), verifyToken, productsController.uploadPhoto);
 
-
 router.put('/edit', verifyToken, verifyAdminRole, productsController.putProducts);
 
 router.delete('/delete', verifyToken, verifyAdminRole, productsController.deleteProduct);
-
 
 module.exports = router;

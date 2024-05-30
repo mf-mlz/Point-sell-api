@@ -5,7 +5,7 @@ const path = require('path');
 
 const registerProducts = async (req, res) => {
 
-    const requiredFields = ['name', 'description', 'price', 'category', 'stock', 'photo'];
+    const requiredFields = ['name', 'description', 'price', 'category', 'stock'];
     const data = req.body;
     delete data.employeeId;
 
@@ -63,7 +63,7 @@ const getAllProducts = async (req, res) => {
 
 const putProducts = async (req, res) => {
 
-    const requiredFields = ['id', 'name', 'description', 'price', 'category', 'stock', 'photo'];
+    const requiredFields = ['id', 'name', 'description', 'price', 'category', 'stock'];
 
     const data = req.body;
 
@@ -72,7 +72,7 @@ const putProducts = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { id, name, email, password, phone, address, role_id } = data;
+    const { id, name, email, password, address, role_id } = data;
 
     try {
 
@@ -107,8 +107,6 @@ const deleteProduct = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
-
-
 
 module.exports = {
     registerProducts,
