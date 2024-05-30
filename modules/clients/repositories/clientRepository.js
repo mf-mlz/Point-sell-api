@@ -52,7 +52,7 @@ const getClient = (data) => {
 const putClients = (client) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE clients SET name= ?, email= ?, phone= ?, address= ?, zip= ? tax_id= ?, tax_system= ?, updated_at= ? WHERE id= ?;';
+        const query = 'UPDATE clients SET name= ?, email= ?, phone= ?, address= ?, zip= ?, tax_id= ?, tax_system= ?, updated_at= ? WHERE id= ?;';
         const values = [client.name, client.email, client.phone, client.address, client.zip, client.tax_id, client.tax_system, client.updated_at, client.id];
 
         connection.query(query, values, (error, results) => {
