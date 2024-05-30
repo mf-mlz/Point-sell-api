@@ -2,8 +2,8 @@ const connection = require('../../../config/database');
 
 const registerProducts = (product) => {
     return new Promise((resolve, reject) => {
-        const query = 'INSERT INTO products (name, description, price, category, stock) VALUES (?, ?, ?, ?, ?)';
-        const values = [product.name, product.description, product.price, product.category, product.stock];
+        const query = 'INSERT INTO products (name, description, price, category, stock, key_sat) VALUES (?, ?, ?, ?, ?, ?)';
+        const values = [product.name, product.description, product.price, product.category, product.stock, product.key_sat];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -68,8 +68,8 @@ const getProduct = (data) => {
 const putProducts = (product) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE products SET name= ?, description= ?, price= ?, category= ?, stock= ?, updated_at= ? WHERE id= ?';
-        const values = [product.name, product.description, product.price, product.category, product.stock, product.updated_at, product.id];
+        const query = 'UPDATE products SET name= ?, description= ?, price= ?, category= ?, stock= ?, key_sat=?, updated_at= ? WHERE id= ?';
+        const values = [product.name, product.description, product.price, product.category, product.stock, product.key_sat, product.updated_at, product.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);

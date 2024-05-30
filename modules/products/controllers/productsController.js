@@ -5,7 +5,7 @@ const path = require('path');
 
 const registerProducts = async (req, res) => {
 
-    const requiredFields = ['name', 'description', 'price', 'category', 'stock'];
+    const requiredFields = ['name', 'description', 'price', 'category', 'stock', 'key_sat'];
     const data = req.body;
     delete data.employeeId;
 
@@ -81,7 +81,7 @@ const getAllProducts = async (req, res) => {
 
 const putProducts = async (req, res) => {
 
-    const requiredFields = ['id', 'name', 'description', 'price', 'category', 'stock'];
+    const requiredFields = ['id', 'name', 'description', 'price', 'category', 'stock', 'key_sat'];
 
     const data = req.body;
 
