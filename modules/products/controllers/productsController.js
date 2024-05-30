@@ -1,5 +1,5 @@
 const productsService = require('../services/productsService');
-const { verifyData,createUpdatetAt } = require('../../../utils/helpers');
+const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 const fs = require('fs');
 const path = require('path');
 
@@ -25,8 +25,26 @@ const registerProducts = async (req, res) => {
 };
 
 const uploadPhoto = async (req, res) => {
+
+    const requiredFields = ['id', 'photo'];
+
+    const data = {
+        id: req.body.id_product,
+        photo: req.file.originalname
+    };
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id, photo } = data;
+
     try {
-        res.status(200).json({ message: 'Archivo Subido con Éxito' });
+
+        data.updated_at = createUpdatetAt();
+        const putProductPhotoServices = await productsService.putProductPhoto(data);
+        res.status(201).json({ message: putProductPhotoServices });
     } catch (err) {
         res.status(500).json({ error: err });
     }
@@ -43,7 +61,7 @@ const filterProducts = async (req, res) => {
         if (productData.length > 0) {
             res.status(401).json({ message: `Se encontraron ${productData.length} registros`, product: productData });
 
-        }else{
+        } else {
             res.status(401).json({ message: `No se encontraron registros` });
         }
 

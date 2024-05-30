@@ -22,6 +22,20 @@ const getAllProducts = () => {
     });
 };
 
+const putProductPhoto = (product) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE products SET  photo= ?, updated_at= ? WHERE id= ?';
+        const values = [product.photo, product.updated_at, product.id];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Archivo Subido con Éxito');
+        });
+
+    });
+};
+
 const getProduct = (data) => {
     return new Promise((resolve, reject) => {
 
@@ -69,7 +83,7 @@ const deleteProduct = (employee) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
         const query = 'DELETE FROM products WHERE id= ?';
-        const values = [employee.id ];
+        const values = [employee.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -82,6 +96,7 @@ const deleteProduct = (employee) => {
 module.exports = {
     registerProducts,
     getAllProducts,
+    putProductPhoto,
     getProduct,
     putProducts,
     deleteProduct

@@ -8,6 +8,10 @@ const getAllProducts = () => {
     return productsRepository.getAllProducts();
 };
 
+const putProductPhoto = (data) => {
+    return productsRepository.putProductPhoto(data);
+};
+
 const getProduct = (data) => {
     return productsRepository.getProduct(data);
 };
@@ -23,6 +27,7 @@ const deleteProduct = (data) => {
 module.exports = {
     registerProducts,
     getAllProducts,
+    putProductPhoto,
     getProduct,
     putProducts,
     deleteProduct
