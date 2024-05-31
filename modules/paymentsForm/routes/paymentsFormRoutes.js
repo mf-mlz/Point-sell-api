@@ -12,4 +12,6 @@ router.post('/register', verifyToken, verifyAdminRole, paymentsFormController.re
 
 router.put('/edit', verifyToken, verifyAdminRole, paymentsFormController.putPaymentsForm);
 
+router.delete('/delete', verifyToken, verifyAdminRole, paymentsFormController.deletePaymentsForm);
+
 module.exports = router;

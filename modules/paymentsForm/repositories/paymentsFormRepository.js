@@ -49,8 +49,24 @@ const putPaymentsForm = (paymentForm) => {
     });
 };
 
+const deletePaymentsForm = (employee) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'DELETE FROM formasdepago WHERE id= ?';
+        const values = [employee.id];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Forma de Pago Eliminado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     getAllPaymentsForm,
     getPaymentsForm,
     registerPaymentsForm,
     putPaymentsForm,
+    deletePaymentsForm
+};

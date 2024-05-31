@@ -80,9 +80,32 @@ const putPaymentsForm = async (req, res) => {
     }
 };
 
+const deletePaymentsForm = async (req, res) => {
+
+    const requiredFields = ['id'];
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id } = data;
+
+    try {
+
+        const deletePaymentsFormServices = await paymentsFormService.deletePaymentsForm(data);
+        res.status(201).json({ message: deletePaymentsFormServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 module.exports = {
     getAllPaymentsForm,
     filterPaymentsForm,
     registerPaymentsForm,
     putPaymentsForm,
+    deletePaymentsForm
 };

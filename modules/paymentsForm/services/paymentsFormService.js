@@ -16,9 +16,14 @@ const putPaymentsForm = (data) => {
     return paymentsFormRepository.putPaymentsForm(data);
 };
 
+const deletePaymentsForm = (data) => {
+    return paymentsFormRepository.deletePaymentsForm(data);
+};
+
 module.exports = {
     getAllPaymentsForm,
     getPaymentsForm,
     registerPaymentsForm,
     putPaymentsForm,
+    deletePaymentsForm
 };
