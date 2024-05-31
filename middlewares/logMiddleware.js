@@ -21,9 +21,8 @@ const generateLogFileName = () => {
     if (!fs.existsSync(logFilePath)) {
         try {
             fs.writeFileSync(logFilePath, '');
-            console.log(`Archivo de registro creado en: ${logFilePath}`);
         } catch (err) {
-            console.error(`Error al crear el archivo de registro: ${err.message}`);
+            return err;
         }
     }
 
