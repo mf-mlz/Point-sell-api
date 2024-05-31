@@ -11,10 +11,14 @@ const getPaymentsForm = (data) => {
 const registerPaymentsForm = (data) => {
     return paymentsFormRepository.registerPaymentsForm(data);
 };
-    registerPaymentsForm,
+
+const putPaymentsForm = (data) => {
+    return paymentsFormRepository.putPaymentsForm(data);
+};
 
 module.exports = {
     getAllPaymentsForm,
     getPaymentsForm,
     registerPaymentsForm,
+    putPaymentsForm,
 };

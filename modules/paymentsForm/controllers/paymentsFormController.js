@@ -55,8 +55,34 @@ const registerPaymentsForm = async (req, res) => {
     }
 };
 
+const putPaymentsForm = async (req, res) => {
+
+    const requiredFields = ["id", 'descripcion'];
+
+    const data = req.body;
+
+    const missingField = verifyData(requiredFields, data);
+    if (missingField) {
+        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+    }
+
+    const { id, descripcion } = data;
+
+    try {
+
+        data.updated_at = createUpdatetAt();
+
+        const registerPaymentsFormServices = await paymentsFormService.putPaymentsForm(data);
+        res.status(201).json({ message: registerPaymentsFormServices });
+
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 module.exports = {
     getAllPaymentsForm,
     filterPaymentsForm,
     registerPaymentsForm,
+    putPaymentsForm,
 };

@@ -35,7 +35,22 @@ const registerPaymentsForm = (paymentForm) => {
     });
 };
 
+const putPaymentsForm = (paymentForm) => {
+    return new Promise((resolve, reject) => {
+        const now = new Date();
+        const query = 'UPDATE formasdepago SET  descripcion= ?, updated_at= ? WHERE id= ?';
+        const values = [paymentForm.descripcion, paymentForm.updated_at, paymentForm.id];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Forma de Pago Modificado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     getAllPaymentsForm,
     getPaymentsForm,
     registerPaymentsForm,
+    putPaymentsForm,

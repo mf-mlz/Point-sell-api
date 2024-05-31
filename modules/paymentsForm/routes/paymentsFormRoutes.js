@@ -10,4 +10,6 @@ router.get('/filter', verifyToken, paymentsFormController.filterPaymentsForm);
 
 router.post('/register', verifyToken, verifyAdminRole, paymentsFormController.registerPaymentsForm);
 
+router.put('/edit', verifyToken, verifyAdminRole, paymentsFormController.putPaymentsForm);
+
 module.exports = router;
