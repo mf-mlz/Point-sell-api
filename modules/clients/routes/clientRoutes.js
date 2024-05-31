@@ -7,7 +7,7 @@ const { validateClient, validateID, validateClientFilter } = require('../../../m
 
 router.get('/', verifyToken, clientController.getAllClients);
 
-router.post('/register', verifyToken, validateClient, verifyAdminRole, clientController.registerClients);
+router.post('/register', verifyToken, verifyAdminRole, validateClient, clientController.registerClients);
 router.get('/filter', verifyToken, validateClientFilter, clientController.filterClients);
 router.put('/edit', verifyToken, validateID, validateClient, verifyAdminRole, clientController.putClients);
 router.delete('/delete', verifyToken, validateID, verifyAdminRole, clientController.deleteClient);
