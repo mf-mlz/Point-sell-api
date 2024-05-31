@@ -1,5 +1,14 @@
 const connection = require('../../../config/database');
 
+const getAllPaymentsForm = () => {
+    return new Promise((resolve, reject) => {
+        connection.query('SELECT * FROM formasdepago', (error, results) => {
+            if (error) return reject(error);
+            resolve(results);
+        });
+    });
+};
+
 const getPaymentsForm = (data) => {
 
     return new Promise((resolve, reject) => {
@@ -15,4 +24,5 @@ const getPaymentsForm = (data) => {
 };
 
 module.exports = {
+    getAllPaymentsForm,
     getPaymentsForm,

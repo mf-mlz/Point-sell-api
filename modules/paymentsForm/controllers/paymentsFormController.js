@@ -1,6 +1,15 @@
 const paymentsFormService = require('../services/paymentsFormService');
 const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 
+const getAllPaymentsForm = async (req, res) => {
+    try {
+        const paymentsForm = await paymentsFormService.getAllPaymentsForm();
+        res.json(paymentsForm);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 const filterPaymentsForm = async (req, res) => {
 
     const data = req.body;
@@ -25,5 +34,6 @@ const filterPaymentsForm = async (req, res) => {
 };
 
 module.exports = {
+    getAllPaymentsForm,
     filterPaymentsForm,
 };
