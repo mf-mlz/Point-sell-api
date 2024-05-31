@@ -8,6 +8,7 @@ const salesRoutes = require('./modules/sales/routes/salesRoutes');
 const salesProductsRoutes = require('./modules/salesProducts/routes/salesProductsRoutes');
 const invoicesRoutes = require('./modules/invoices/routes/invoicesRoutes');
 const { requestLogger } = require('./middlewares/logMiddleware');
+const paymentsFormRoutes = require('./modules/paymentsForm/routes/paymentsFormRoutes');
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/products', productsRoutes);
 app.use('/api/sales', salesRoutes);
 app.use('/api/salesproducts', salesProductsRoutes);
 app.use('/api/invoices', invoicesRoutes);
+app.use('/api/paymentsform', paymentsFormRoutes);
 
 app.use((err, req, res, next) => {
     if (err.type === 'entity.too.large') {
