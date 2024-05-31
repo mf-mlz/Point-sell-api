@@ -18,7 +18,8 @@ const validateEmployee = [
     body('name')
         .trim()
         .isLength({ min: 1 })
-        .isString(),
+        .isString()
+        .matches(/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/),
     body('email')
         .trim()
         .isLength({ min: 1 })
@@ -60,7 +61,8 @@ const validateEmployeeFilter = [
         .optional()
         .trim()
         .isLength({ min: 1 })
-        .isString(),
+        .isString()
+        .matches(/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/),
     body('email')
         .optional()
         .trim()
