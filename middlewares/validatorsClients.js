@@ -18,7 +18,8 @@ const validateClient = [
     body('name')
         .trim()
         .isLength({ min: 1 })
-        .isString(),
+        .isString()
+        .matches(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]*$/),
     body('email')
         .trim()
         .isLength({ min: 1 })
@@ -69,7 +70,8 @@ const validateClientFilter = [
         .optional()
         .trim()
         .isLength({ min: 1 })
-        .isString(),
+        .isString()
+        .matches(/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]*$/),
     body('email')
         .optional()
         .trim()
