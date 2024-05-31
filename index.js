@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const clientsRoutes = require('./modules/clients/routes/clientRoutes');
 const employeesRoutes = require('./modules/employees/routes/employeesRoutes');
 const productsRoutes = require('./modules/products/routes/productsRoutes');
@@ -10,6 +11,13 @@ const invoicesRoutes = require('./modules/invoices/routes/invoicesRoutes');
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost/',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 
