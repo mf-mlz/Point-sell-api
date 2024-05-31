@@ -23,6 +23,19 @@ const getPaymentsForm = (data) => {
     });
 };
 
+const registerPaymentsForm = (paymentForm) => {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO formasdepago ( descripcion ) VALUES (?);';
+        const values = [paymentForm.descripcion];
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Forma de Pago Registrado Correctamente');
+        });
+
+    });
+};
+
 module.exports = {
     getAllPaymentsForm,
     getPaymentsForm,
+    registerPaymentsForm,

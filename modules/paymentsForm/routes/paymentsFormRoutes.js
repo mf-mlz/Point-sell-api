@@ -8,4 +8,6 @@ const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
 router.get('/', verifyToken, paymentsFormController.getAllPaymentsForm);
 router.get('/filter', verifyToken, paymentsFormController.filterPaymentsForm);
 
+router.post('/register', verifyToken, verifyAdminRole, paymentsFormController.registerPaymentsForm);
+
 module.exports = router;
