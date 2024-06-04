@@ -5,6 +5,8 @@ const productsController = require('../controllers/productsController');
 const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
 const { upload } = require('../../../config/upload');
+const { validateProduct, validateID, validateProductFilter } = require('../../../middlewares/validatorsProducts');
+
 
 const handleFileUpload = async (req, res, next) => {
     try {
@@ -27,7 +29,7 @@ const handleFileUpload = async (req, res, next) => {
 };
 
 router.get('/', verifyToken, productsController.getAllProducts);
-router.get('/filter', verifyToken, productsController.filterProducts);
+router.get('/filter', verifyToken, validateProduct, validateProductFilter, productsController.filterProducts);
 
 router.post('/register', verifyToken, verifyAdminRole, productsController.registerProducts);
 router.post('/upload', handleFileUpload, verifyToken, (req, res, next) => {
@@ -37,8 +39,8 @@ router.post('/upload', handleFileUpload, verifyToken, (req, res, next) => {
     productsController.uploadPhoto(req, res, next);
 });
 
-router.put('/edit', verifyToken, verifyAdminRole, productsController.putProducts);
+router.put('/edit', verifyToken, validateID, validateProduct, verifyAdminRole, productsController.putProducts);
 
-router.delete('/delete', verifyToken, verifyAdminRole, productsController.deleteProduct);
+router.delete('/delete', verifyToken, validateID, verifyAdminRole, productsController.deleteProduct);
 
 module.exports = router;
