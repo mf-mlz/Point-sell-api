@@ -3,14 +3,16 @@ const router = express.Router();
 const salesController = require('../controllers/salesController');
 const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
+const { validateSale, validateID, validateSaleFilter } = require('../../../middlewares/validatorsProducts');
+
 
 router.get('/', verifyToken, salesController.getAllSales);
 
-router.post('/register', verifyToken, salesController.registerSales);
-router.post('/filter', verifyToken, salesController.filterSales);
+router.post('/register', verifyToken, validateSale, salesController.registerSales);
+router.post('/filter', verifyToken, validateSaleFilter, salesController.filterSales);
 
-router.put('/edit', verifyToken, verifyAdminRole, salesController.putSale);
+router.put('/edit', verifyToken, validateID, validateSale, verifyAdminRole, salesController.putSale);
 
-router.delete('/delete', verifyToken, verifyAdminRole, salesController.deleteSale);
+router.delete('/delete', verifyToken, validateID, verifyAdminRole, salesController.deleteSale);
 
 module.exports = router;
