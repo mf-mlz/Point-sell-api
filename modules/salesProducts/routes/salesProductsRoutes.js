@@ -7,10 +7,10 @@ const { validateSaleProduct, validateID, validateSaleProductFilter } = require('
 
 router.get('/', verifyToken, salesProductsController.getAllSalesProducts);
 
-router.post('/register', verifyToken, validateClient, salesProductsController.registerSalesProducts);
+router.post('/register', verifyToken, validateSaleProduct, salesProductsController.registerSalesProducts);
 router.post('/filter', verifyToken, validateSaleProductFilter, salesProductsController.filterSalesProducts);
 
-router.put('/edit', verifyToken, validateID, validateClient, verifyAdminRole, salesProductsController.putSalesProducts);
+router.put('/edit', verifyToken, validateID, validateSaleProduct, verifyAdminRole, salesProductsController.putSalesProducts);
 
 router.delete('/delete', verifyToken, validateID, verifyAdminRole, salesProductsController.deleteSalesProducts);
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const salesController = require('../controllers/salesController');
 const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
-const { validateSale, validateID, validateSaleFilter } = require('../../../middlewares/validatorsProducts');
+const { validateSale, validateID, validateSaleFilter } = require('../../../middlewares/validatorsSale');
 
 
 router.get('/', verifyToken, salesController.getAllSales);
