@@ -106,6 +106,38 @@ const createItemsObj = async (req, res, objSale) => {
 
 };
 
+const sendEmail = async (req, res) => {
+
+
+    const { invoiceId, emails } = req.body;
+
+    if (!invoiceId || !emails || (Array.isArray(emails) && emails.length === 0)) {
+        return res.status(400).send({ error: 'invoiceId y emails son requeridos' });
+    }
+
+    const data = req.body;
+    try {
+        console.log('xD');
+        const responseSendEmail = await invoicesService.sendEmail(data);
+
+        if (responseSendEmail) {
+
+            res.status(200).send({ message: 'Correo enviado' });
+        } else {
+            res.status(500).send({ error: 'Error al enviar el correo'});
+
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Ocurrió un error al enviar la Factura' });
+    }
+};
+
+
+
+
 module.exports = {
-    createInvoice
+    createInvoice,
+    sendEmail
 }

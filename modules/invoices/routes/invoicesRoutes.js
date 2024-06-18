@@ -5,5 +5,6 @@ const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyAdminRole } = require('../../../middlewares/adminMiddleware');
 
 router.post('/create', verifyToken, invoicesController.createInvoice);
+router.post('/sendEmail', verifyToken, invoicesController.sendEmail);
 
 module.exports = router;
