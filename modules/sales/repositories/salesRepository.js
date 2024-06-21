@@ -22,7 +22,7 @@ const registerSales = (sale) => {
                     )[0];
 
                     if (arrayP.stock < product.quantity) {
-                        return reject(`No hay suficiente stock`);
+                        return reject(`No hay suficiente stock de producto ${product.description}, solo cuentas con ${arrayP.stock} existencias`);
                     }
                     resolve();
                 });
