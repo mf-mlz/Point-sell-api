@@ -1,49 +1,55 @@
 const connection = require('../../../config/database');
 
-const registerSales = (sale) => {
+const registerSales = async (sale) => {
+    try {
+        const products = sale.products;
+
+        // Verificar el stock de todos los productos
+        for (const product of products) {
+            const q = 'call verify_stock(?);';
+            const v = [product.id];
+            const results = await queryDatabase(q, v);
+
+            if (!results || !results.length || !results[0].length) {
+                throw new Error(`Error al verificar el stock del producto ${product.description}`);
+            }
+
+            const arrayP = results[0][0];
+
+            if (arrayP.stock < product.quantity) {
+                throw new Error(`No hay suficiente stock de producto ${product.description}, solo cuentas con ${arrayP.stock} existencias`);
+            }
+        }
+
+        // Insertar la venta en la base de datos
+        const query = 'INSERT INTO sales (date, totalAmount, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?)';
+        const values = [sale.date, sale.totalAmount, sale.customerId, sale.employeesId, sale.status];
+        await queryDatabase(query, values);
+
+        // Actualizar el stock de todos los productos
+        for (const product of products) {
+            const q = 'call update_stock(?,?);';
+            const v = [product.id, product.quantity];
+            await queryDatabase(q, v);
+        }
+
+        return 'Venta registrada y stock actualizado correctamente';
+
+    } catch (error) {
+        throw new Error(`Error al registrar la venta: ${error.message}`);
+    }
+};
+
+// Función auxiliar para realizar consultas a la base de datos
+const queryDatabase = (query, values) => {
     return new Promise((resolve, reject) => {
-        let products = sale.products;
-
-        let stockChecks = products.map(product => {
-            return new Promise((resolve, reject) => {
-                const q = 'call verify_stock(?);';
-                const v = [product.id];
-                connection.query(q, v, (error, results) => {
-                    if (error) return reject(error);
-
-                    const arrayP = JSON.parse(
-                        JSON.stringify(
-                            results.map(
-                                row => (
-                                    { ...row[0] }
-                                )
-                            )
-                        )
-                    )[0];
-
-                    if (arrayP.stock < product.quantity) {
-                        return reject(`No hay suficiente stock de producto ${product.description}, solo cuentas con ${arrayP.stock} existencias`);
-                    }
-                    resolve();
-                });
-            });
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve(results);
         });
-
-        Promise.all(stockChecks)
-            .then(() => {
-                const query = 'INSERT INTO sales (date, totalAmount, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?)';
-                const values = [sale.date, sale.totalAmount, sale.customerId, sale.employeesId, sale.status];
-
-                connection.query(query, values, (error, results) => {
-                    if (error) return reject(error);
-                    resolve('Venta Registrada Correctamente');
-                });
-            })
-            .catch(error => {
-                resolve(error);
-            });
     });
 };
+
 
 const getAllSales = () => {
     return new Promise((resolve, reject) => {
