@@ -7,7 +7,7 @@ dotenv.config();
 
 const registerSales = async (req, res) => {
 
-    const requiredFields = ['date', 'totalAmount', 'customerId', 'employeesId', 'status'];
+    const requiredFields = ['date', 'totalAmount', 'payment', 'customerId', 'employeesId', 'status'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
@@ -15,7 +15,7 @@ const registerSales = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { date, totalAmount, customerId, employeesId, status } = data;
+    const { date, totalAmount, payment, customerId, employeesId, status } = data;
 
     try {
 
@@ -57,7 +57,7 @@ const getAllSales = async (req, res) => {
 
 const putSale = async (req, res) => {
 
-    const requiredFields = ['id', 'date', 'totalAmount', 'customerId', 'employeesId', 'status'];
+    const requiredFields = ['id', 'date', 'totalAmount', 'payment', 'customerId', 'employeesId', 'status'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
@@ -65,7 +65,7 @@ const putSale = async (req, res) => {
         return res.status(400).json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { id, date, totalAmount, customerId, employeesId, status } = data;
+    const { id, date, totalAmount, payment, customerId, employeesId, status } = data;
 
     try {
 
