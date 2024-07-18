@@ -27,6 +27,10 @@ const validateSale = [
         .trim()
         .isLength({ min: 1, max: 50 })
         .isNumeric(),
+    body('dataPayment')
+        .trim()
+        .isLength({ min: 1, max: 50 })
+        .matches(/^[0-9]*$/),
     body('status')
         .trim()
         .isLength({ min: 1, max: 30 })
@@ -77,6 +81,11 @@ const validateSaleFilter = [
         .trim()
         .isLength({ min: 1, max: 50 })
         .isNumeric(),
+    body('dataPayment')
+        .optional()
+        .trim()
+        .isLength({ min: 1, max: 50 })
+        .matches(/^[0-9]*$/),
     body('status')
         .optional()
         .trim()
