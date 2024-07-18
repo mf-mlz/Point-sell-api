@@ -20,6 +20,7 @@ const validateSaleProduct = [
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
     body('total')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
@@ -56,21 +57,15 @@ const validateSaleProductFilter = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-
-   
-        body('quantity')
+    body('quantity')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
     body('total')
-        .trim()
-        .isLength({ min: 1, max: 10 })
-        .isNumeric(),
-
-    body('salesId')
         .optional()
         .trim()
-        .isLength({ min: 1 })
+        .isLength({ min: 1, max: 10 })
         .isNumeric(),
     body('salesId')
         .optional()
