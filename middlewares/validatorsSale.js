@@ -29,8 +29,8 @@ const validateSale = [
         .isNumeric(),
     body('status')
         .trim()
-        .isLength({ min: 1, max: 1 })
-        .isNumeric(),
+        .isLength({ min: 1, max: 30 })
+        .matches(/^[a-zA-ZÀ-ÿ0-9\s,.'#-]*$/),
     body('customerId')
         .optional()
         .trim()
@@ -80,8 +80,8 @@ const validateSaleFilter = [
     body('status')
         .optional()
         .trim()
-        .isLength({ min: 1, max: 1 })
-        .isNumeric(),
+        .isLength({ min: 1, max: 30 })
+        .matches(/^[a-zA-ZÀ-ÿ0-9\s,.'#-]*$/),
     body('customerId')
         .optional()
         .trim()
