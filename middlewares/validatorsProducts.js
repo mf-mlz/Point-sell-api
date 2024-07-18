@@ -64,29 +64,35 @@ const validateProductFilter = [
         .isLength({ min: 1 })
         .isNumeric(),
     body('name')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 20 })
         .isString()
         .matches(/^([a-zA-Zñáéíóú\s]{1,20})/),
     body('description')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 50 })
         .isString()
         .matches(/^([\W\wÑ&]{1,50})/),
     body('price')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
     body('category')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 50 })
         .isString()
         .matches(/^([\W\wÑ&]{1,50})/),
     body('stock')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
     body('key_sat')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 8 })
         .matches(/([0-9]{8})/),
