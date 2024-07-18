@@ -58,16 +58,18 @@ const validateSaleFilter = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-
     body('date')
+        .optional()
         .isISO8601()
         .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
         .toDate(),
     body('totalAmount')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 50 })
         .isNumeric(),
     body('status')
+        .optional()
         .trim()
         .isLength({ min: 1, max: 1 })
         .isNumeric(),
