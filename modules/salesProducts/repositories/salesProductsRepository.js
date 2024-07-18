@@ -52,7 +52,7 @@ const getSalesJoinProducts = (data) => {
         Object.entries(data).forEach(([key, value]) => {
 
             values.push(value);
-            keys += "sales_products."+key + " = ? OR ";
+            keys += "sales_products." + key + " = ? OR ";
         });
 
         keys = keys.trim();
@@ -85,7 +85,7 @@ const putSalesProducts = (salesProducts) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
         const query = 'UPDATE sales_products SET salesId= ?, productId= ?, quantity= ?, total= ?, updated_at= ?  WHERE id = ?';
-        const values = [salesProducts.salesId, salesProducts.productId, salesProducts.quantity, salesProducts.total, salesProducts.updated_at, salesProducts.id ];
+        const values = [salesProducts.salesId, salesProducts.productId, salesProducts.quantity, salesProducts.total, salesProducts.updated_at, salesProducts.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -99,7 +99,7 @@ const deleteSalesProducts = (salesProducts) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
         const query = 'DELETE FROM sales_products WHERE id= ?';
-        const values = [salesProducts.id ];
+        const values = [salesProducts.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -110,11 +110,24 @@ const deleteSalesProducts = (salesProducts) => {
 };
 
 
+const getInfoTicket = (id) => {
+    return new Promise((resolve, reject) => {
+        const query = 'call get_info_ticket(?)';
+        const values = [id];
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            const result = JSON.parse(JSON.stringify(results))[0];
+            resolve(result);
+        });
+    });
+};
+
 module.exports = {
     registerSalesProducts,
     getSalesProducts,
     getSalesJoinProducts,
     getAllSalesProducts,
     putSalesProducts,
-    deleteSalesProducts
+    deleteSalesProducts,
+    getInfoTicket
 };

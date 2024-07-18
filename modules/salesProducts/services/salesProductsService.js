@@ -24,6 +24,10 @@ const deleteSalesProducts = (sale) => {
     return salesProductsRepository.deleteSalesProducts(sale);
 };
 
+const getInfoTicket = (sale) => {
+    return salesProductsRepository.getInfoTicket(sale);
+};
+
 
 module.exports = {
     registerSalesProducts,
@@ -31,5 +35,6 @@ module.exports = {
     getSalesJoinProducts,
     getAllSalesProducts,
     putSalesProducts,
-    deleteSalesProducts
+    deleteSalesProducts,
+    getInfoTicket
 };

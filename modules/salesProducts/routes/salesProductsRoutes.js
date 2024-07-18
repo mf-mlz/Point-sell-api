@@ -13,5 +13,7 @@ router.post('/filter', verifyToken, validateSaleProductFilter, salesProductsCont
 router.put('/edit', verifyToken, validateID, validateSaleProduct, verifyAdminRole, salesProductsController.putSalesProducts);
 
 router.delete('/delete', verifyToken, validateID, verifyAdminRole, salesProductsController.deleteSalesProducts);
+router.post('/generateTicket', verifyToken, /* validateID,  */salesProductsController.generateTicket);
+
 
 module.exports = router;
