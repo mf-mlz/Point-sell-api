@@ -147,7 +147,19 @@ const generateTicket = async (req, res) => {
 
         console.log(dataTicket);
 
-        const doc = new PDFDocument({ size: 'A6' });
+
+
+
+
+        const doc = new PDFDocument({
+            size: 'A6',
+            margins: {
+                top: 10,
+                bottom: 10,
+                left: 10,
+                right: 10
+            }
+        });
 
         // Datos del ticket
 
@@ -167,7 +179,10 @@ const generateTicket = async (req, res) => {
         const numcar = "1234";
         const autorizacion = "678912";
 
+        const cantidad = 100;
+
         // Encabezado del documento
+        let y = 0;
         doc
             .fontSize(12)
             .text('Tiendita xD', 20, 20);
@@ -194,7 +209,7 @@ const generateTicket = async (req, res) => {
             .text('Productos:', 20, 80);
 
         dataTicket.forEach((producto, index) => {
-            texto = `${index + 1}. ${producto.name_product.substring(0, 20) + '...'}`;
+            texto = `${index + 1}. ${producto.name_product.substring(0, 25) + '...'}`;
             doc
                 .moveDown()
                 .fontSize(10)
@@ -206,36 +221,53 @@ const generateTicket = async (req, res) => {
             doc
                 .moveDown()
                 .fontSize(10)
-                .text(texto.toUpperCase(), 185, 100 + index * 20);
+                .text(texto.toUpperCase(), 220, 100 + index * 20);
         });
 
         // SubTotal
         doc.moveDown()
             .fontSize(10)
-            .text(`SubTotal: $${(dataTicket[0].total_sale * 0.84)}`, 50, 160);
+            .text(`SubTotal: $${(dataTicket[0].total_sale * 0.84)}`, 177, 160);
         // Iva
         doc.moveDown()
             .fontSize(10)
-            .text(`IVA: $${(dataTicket[0].total_sale * 0.16)}`, 50, 180);
+            .text(`IVA: $${(dataTicket[0].total_sale * 0.16)}`, 200, 180);
         // Total
         doc.moveDown()
             .fontSize(10)
-            .text(`Total: $${dataTicket[0].total_sale}`, 50, 200);
+            .text(`Total: $${dataTicket[0].total_sale}`, 195, 200);
+
+        if (dataTicket[0].paymentForm === "Efectivo") {
+            // Metodo de Pago
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Método de Pago: ${dataTicket[0].paymentForm}`, 20, 220);
+            //
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Cantidad: ${cantidad}`, 20, 230);
+            // 
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Cambio: $${cantidad - dataTicket[0].total_sale}`, 20, 240);
+
+        } if (dataTicket[0].paymentForm === "Tarjeta de débito") {
+            // Metodo de Pago
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Método de Pago: $${pay}`, 20, 220);
+            // Metodo de Pago
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Número de Tarjeta: **** **** **** $${numcar}`, 20, 230);
+            // autorizacion
+            doc.moveDown()
+                .fontSize(10)
+                .text(`Autorización: $${autorizacion}`, 20, 240);
+
+        }
 
 
-
-        // Metodo de Pago
-        doc.moveDown()
-            .fontSize(10)
-            .text(`Método de Pago: $${pay}`, 20, 220);
-        // Metodo de Pago
-        doc.moveDown()
-            .fontSize(10)
-            .text(`Número de Tarjeta: **** **** **** $${numcar}`, 20, 230);
-        // autorizacion
-        doc.moveDown()
-            .fontSize(10)
-            .text(`Autorización: $${autorizacion}`, 20, 240);
 
         // Thanks
         doc.moveDown()
