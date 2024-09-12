@@ -17,7 +17,7 @@ const registerProducts = async (req, res) => {
     try {
 
         const registerProductsServices = await productsService.registerProducts(data);
-        res.status(201).json({ message: registerProductsServices });
+        res.status(201).json(registerProductsServices);
 
     } catch (err) {
         res.status(500).json({ error: err.message });

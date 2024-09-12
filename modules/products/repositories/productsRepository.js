@@ -15,7 +15,11 @@ const registerProducts = (product) => {
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
-      resolve("Producto Registrado Correctamente");
+      const insertedId = results.insertId;
+      resolve({
+        message: "Producto Registrado Correctamente",
+        id: insertedId,
+      });
     });
   });
 };
