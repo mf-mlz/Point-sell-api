@@ -102,11 +102,30 @@ const deleteSale = async (req, res) => {
 };
 
 
+const getSaleDate = async (req, res) => {
+
+    const data = req.body;
+    try {
+        delete data.employeeId;
+        const getSaleDate = await salesService.getSaleDate(data);
+        if (getSaleDate.length > 0) {
+            res.status(401).json({ message: `Se encontraron ${getSaleDate.length} registros`, sales: getSaleDate });
+
+        } else {
+            res.status(401).json({ message: `No se encontraron registros` });
+        }
+
+    } catch (err) {
+        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
+    }
+
+};
 
 module.exports = {
     registerSales,
     filterSales,
     getAllSales,
     putSale,
-    deleteSale
+    deleteSale,
+    getSaleDate
 };

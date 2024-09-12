@@ -117,10 +117,30 @@ const deleteSale = (employee) => {
     });
 };
 
+const getSaleDate = (data) => {
+    return new Promise((resolve, reject) => {
+
+        let values = [];
+        Object.entries(data).forEach(([key, value]) => {
+            values.push(value);
+        });
+
+        const k = "date > ? AND date < ?";
+        const query = ' SELECT * FROM sales WHERE ' + k + ';';
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            const result = JSON.parse(JSON.stringify(results));
+            resolve(result);
+        });
+
+    });
+};
+
 module.exports = {
     registerSales,
     getAllSales,
     getSale,
     putSale,
-    deleteSale
+    deleteSale,
+    getSaleDate
 };
