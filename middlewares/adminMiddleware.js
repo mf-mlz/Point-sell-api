@@ -5,7 +5,7 @@ dotenv.config();
 
 const verifyAdminRole = async (req, res, next) => {
     try {
-        const idUser = req.body.employeeId;
+        const idUser = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
         const data = { "id" : idUser };
 
         const employeeData = await employeesService.getEmployee(data);

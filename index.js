@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
@@ -15,22 +16,22 @@ dotenv.config();
 
 const app = express();
 
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, 
-    max: 100, 
-    handler: (req, res) => {
-        return res.status(429).json({ error: 'Ocurrió un error en la petición'});
-    },
-    headers: true, 
-  });
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, 
+//     max: 100, 
+//     handler: (req, res) => {
+//         return res.status(429).json({ error: 'Ocurrió un error en la petición'});
+//     },
+//     headers: true, 
+//   });
 
 app.use(cors({
-    origin: 'http://localhost/',
+    origin: 'http://localhost:4200',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'employeeId']
 }));
 
-app.use(limiter);
+// app.use(limiter);
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(requestLogger);
@@ -42,6 +43,7 @@ app.use('/api/sales', salesRoutes);
 app.use('/api/salesproducts', salesProductsRoutes);
 app.use('/api/invoices', invoicesRoutes);
 app.use('/api/paymentsform', paymentsFormRoutes);
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
     if (err.type === 'entity.too.large') {

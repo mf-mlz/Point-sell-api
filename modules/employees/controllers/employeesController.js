@@ -72,11 +72,18 @@ const loginEmployees = async (req, res) => {
             const verifyPassword = await passwordService.verifyPassword(password, employeeData[0].password);
             if (verifyPassword) {
 
-                const payload = employeeData[0];
-
+                const payload = {
+                    id: employeeData[0].id,
+                    name: employeeData[0].name,
+                    email: employeeData[0].email,
+                    phone: employeeData[0].phone,
+                    role_id: employeeData[0].role_id,
+                    role_name: employeeData[0].role_name,
+                };
+                
                 const options = {
                     algorithm: 'HS256',
-                    expiresIn: '7d'
+                    expiresIn: '2h'
                 };
 
                 const token = jwt.sign(payload, process.env.JWT_SECRET, options);

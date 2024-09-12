@@ -59,10 +59,10 @@ const filterProducts = async (req, res) => {
         delete data.employeeId;
         const productData = await productsService.getProduct(data);
         if (productData.length > 0) {
-            res.status(401).json({ message: `Se encontraron ${productData.length} registros`, product: productData });
+            res.status(200).json({ message: `Se encontraron ${productData.length} registros`, product: productData });
 
         } else {
-            res.status(401).json({ message: `No se encontraron registros` });
+            res.status(200).json({ message: `No se encontraron registros`, product: [] });
         }
 
     } catch (err) {
@@ -126,11 +126,31 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const getCategories = async (req, res) => {
+    try {
+        const products = await productsService.getCategories();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getAllKeySatProducts = async (req, res) => {
+    try {
+        const products = await productsService.getAllKeySatProducts();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     registerProducts,
     uploadPhoto,
     getAllProducts,
     filterProducts,
     putProducts,
-    deleteProduct
+    deleteProduct,
+    getCategories,
+    getAllKeySatProducts
 };

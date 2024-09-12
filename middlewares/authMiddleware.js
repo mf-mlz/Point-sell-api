@@ -37,7 +37,7 @@ const verifyToken = (req, res, next) => {
                     }
                 } else {
                     const idPayload = decoded.id;
-                    const idEmployee = req.body.employeeId || req.query.employeeId || req.params.employeeId;
+                    const idEmployee = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
 
                     if (parseInt(idPayload) !== parseInt(idEmployee)) {
                         if (req.file) {

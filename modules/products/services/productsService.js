@@ -24,11 +24,21 @@ const deleteProduct = (data) => {
     return productsRepository.deleteProduct(data);
 };
 
+const getCategories = (data) => {
+    return productsRepository.getCategories(data);
+};
+
+const getAllKeySatProducts = (data) => {
+    return productsRepository.getAllKeySatProducts(data);
+};
+
 module.exports = {
     registerProducts,
     getAllProducts,
     putProductPhoto,
     getProduct,
     putProducts,
-    deleteProduct
+    deleteProduct,
+    getCategories,
+    getAllKeySatProducts
 };

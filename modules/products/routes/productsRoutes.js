@@ -29,8 +29,10 @@ const handleFileUpload = async (req, res, next) => {
 };
 
 router.get('/', verifyToken, productsController.getAllProducts);
-router.get('/filter', verifyToken, validateProduct, validateProductFilter, productsController.filterProducts);
+router.get('/categories', verifyToken, productsController.getCategories);
+router.get('/keySat', verifyToken, productsController.getAllKeySatProducts);
 
+router.post('/filter', verifyToken, validateProductFilter, productsController.filterProducts);
 router.post('/register', verifyToken, verifyAdminRole, productsController.registerProducts);
 router.post('/upload', handleFileUpload, verifyToken, (req, res, next) => {
     if (!req.file) {
@@ -42,5 +44,6 @@ router.post('/upload', handleFileUpload, verifyToken, (req, res, next) => {
 router.put('/edit', verifyToken, validateID, validateProduct, verifyAdminRole, productsController.putProducts);
 
 router.delete('/delete', verifyToken, validateID, verifyAdminRole, productsController.deleteProduct);
+
 
 module.exports = router;
