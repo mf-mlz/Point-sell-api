@@ -101,6 +101,16 @@ const validateSaleFilter = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
+    body('dateBefore')
+        .optional()
+        .isISO8601()
+        .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
+        .toDate(),
+    body('dateAfter')
+        .optional()
+        .isISO8601()
+        .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
+        .toDate(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
