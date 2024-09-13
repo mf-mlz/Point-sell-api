@@ -65,7 +65,7 @@ const getProduct = (data) => {
       keys = keys.substring(0, keys.length - 3);
     }
 
-    const query = "SELECT * FROM products WHERE " + keys;
+    const query = "SELECT * FROM products WHERE " + keys + " AND status = 'Active'";
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
