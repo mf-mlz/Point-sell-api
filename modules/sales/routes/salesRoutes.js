@@ -10,6 +10,7 @@ router.get('/', verifyToken, salesController.getAllSales);
 
 router.post('/register', verifyToken, validateSale, salesController.registerSales);
 router.post('/filter', verifyToken, validateSaleFilter, salesController.filterSales);
+router.post('/getSaleDate', verifyToken, validateSaleFilter, salesController.getSaleDate);
 
 router.put('/edit', verifyToken, validateID, validateSale, verifyAdminRole, salesController.putSale);
 
