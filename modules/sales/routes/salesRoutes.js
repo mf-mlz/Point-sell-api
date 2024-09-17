@@ -8,7 +8,7 @@ const { validateSale, validateID, validateSaleFilter } = require('../../../middl
 
 router.get('/', verifyToken, salesController.getAllSales);
 
-router.post('/register', verifyToken, validateSale, salesController.registerSales);
+router.post('/register', verifyToken, verifyAdminRole, salesController.registerSales);
 router.post('/filter', verifyToken, validateSaleFilter, salesController.filterSales);
 router.post('/getSaleDate', verifyToken, validateSaleFilter, salesController.getSaleDate);
 
