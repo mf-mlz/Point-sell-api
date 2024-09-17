@@ -109,10 +109,10 @@ const getSaleDate = async (req, res) => {
         delete data.employeeId;
         const getSaleDate = await salesService.getSaleDate(data);
         if (getSaleDate.length > 0) {
-            res.status(401).json({ message: `Se encontraron ${getSaleDate.length} registros`, sales: getSaleDate });
+            res.status(200).json({ message: `Se encontraron ${getSaleDate.length} registros`, sales: getSaleDate });
 
         } else {
-            res.status(401).json({ message: `No se encontraron registros` });
+            res.status(200).json({ message: `No se encontraron registros` });
         }
 
     } catch (err) {
