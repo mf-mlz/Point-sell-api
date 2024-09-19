@@ -55,8 +55,13 @@ const getProduct = (data) => {
     let values = [];
 
     Object.entries(data).forEach(([key, value]) => {
-      values.push(`%${value}%`);
-      keys += `${key} LIKE ? OR `;
+      if (key == "stock") {
+        values.push(`${value}`);
+        keys += `${key} <= ? OR `;
+      } else {
+        values.push(`%${value}%`);
+        keys += `${key} LIKE ? OR `;
+      }
     });
 
     keys = keys.trim();
@@ -65,7 +70,10 @@ const getProduct = (data) => {
       keys = keys.substring(0, keys.length - 3);
     }
 
-    const query = "SELECT * FROM products WHERE " + keys + " AND status = 'Active'";
+    console.log(keys);
+
+    const query =
+      "SELECT * FROM products WHERE " + keys + " AND status = 'Active'";
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
