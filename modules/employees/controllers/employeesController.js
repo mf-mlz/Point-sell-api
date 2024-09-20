@@ -24,7 +24,7 @@ const registerEmployees = async (req, res) => {
         data.password = hashedPassword;
 
         const registerEmployeesServices = await employeesService.registerEmployees(data);
-        res.status(201).json({ message: registerEmployeesServices });
+        res.status(200).json({ message: registerEmployeesServices });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -40,12 +40,25 @@ const filterEmployees = async (req, res) => {
         delete data.employeeId;
         const employeeData = await employeesService.getEmployee(data);
         if (employeeData.length > 0) {
-            res.status(401).json({ message: `Se encontraron ${employeeData.length} registros`, employee: employeeData });
+            res.status(200).json({ message: `Se encontraron ${employeeData.length} registros`, employee: employeeData });
 
         }else{
-            res.status(401).json({ message: `No se encontraron registros` });
+            res.status(200).json({ message: `No se encontraron registros` });
         }
 
+    } catch (err) {
+        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
+    }
+};
+const filterEmployeesAll = async (req, res) => {
+    const data = req.body;
+    try {
+        const employeeData = await employeesService.getEmployeeAll(data);
+        if (employeeData.length > 0) {
+            res.status(200).json({ message: `Se encontraron ${employeeData.length} registros`, employee: employeeData });
+        }else{
+            res.status(200).json({ message: `No se encontraron registros` });
+        }
     } catch (err) {
         res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
     }
@@ -115,7 +128,7 @@ const getAllEmployees = async (req, res) => {
 
 const putEmployees = async (req, res) => {
 
-    const requiredFields = ['id', 'name', 'email', 'password', 'phone', 'address', 'role_id'];
+    const requiredFields = ['id', 'name', 'email', 'phone', 'address', 'role_id'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
@@ -127,12 +140,10 @@ const putEmployees = async (req, res) => {
 
     try {
 
-        const hashedPassword = await passwordService.hashPassword(password);
-        data.password = hashedPassword;
         data.updated_at = createUpdatetAt();
 
         const registerEmployeesServices = await employeesService.putEmployees(data);
-        res.status(201).json({ message: registerEmployeesServices });
+        res.status(200).json({ message: registerEmployeesServices });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -146,16 +157,14 @@ const deleteEmployee = async (req, res) => {
 
     const missingField = verifyData(requiredFields, data);
     if (missingField) {
-        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
+        return res.status(200).json({ error: `El campo ${missingField} es requerido` });
     }
 
     const { id } = data;
 
     try {
-
         const deleteEmployeeServices = await employeesService.deleteEmployee(data);
-        res.status(201).json({ message: deleteEmployeeServices });
-
+        res.status(200).json({ message: deleteEmployeeServices });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -168,6 +177,7 @@ module.exports = {
     registerEmployees,
     loginEmployees,
     filterEmployees,
+    filterEmployeesAll,
     putEmployees,
     deleteEmployee
 };

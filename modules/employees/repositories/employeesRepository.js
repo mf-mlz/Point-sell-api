@@ -15,12 +15,13 @@ const registerEmployees = (employee) => {
 
 const getAllEmployees = () => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM employees', (error, results) => {
+        connection.query('SELECT * FROM employees WHERE status = "Active"', (error, results) => {
             if (error) return reject(error);
             resolve(results);
         });
     });
 };
+
 const getEmployee = (data) => {
     return new Promise((resolve, reject) => {
 
@@ -30,7 +31,7 @@ const getEmployee = (data) => {
         Object.entries(data).forEach(([key, value]) => {
 
             values.push(value);
-            keys += 'employees.'+key + " = ? OR ";
+            keys += 'employees.' + key + " = ? OR ";
         });
 
         keys = keys.trim();
@@ -38,9 +39,9 @@ const getEmployee = (data) => {
         if (keys.endsWith('OR')) {
             keys = keys.substring(0, keys.length - 2);
         }
-        
+
         const query = 'SELECT employees.*, roles.name as role_name FROM employees INNER JOIN roles ON employees.role_id = roles.id  WHERE ' + keys + "";
-        
+
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
             const result = JSON.parse(JSON.stringify(results));
@@ -50,12 +51,24 @@ const getEmployee = (data) => {
     });
 };
 
+const getEmployeeAll = (data) => {
+    return new Promise((resolve, reject) => {
+        const aux = '%' + data.search + '%';
+        let values = [aux, aux, aux, aux];
+        const query = 'SELECT * FROM employees where (name like ? or email like ? or phone like ? or address like ?) and status = "Active";';
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            const result = JSON.parse(JSON.stringify(results));
+            resolve(result);
+        });
+    });
+};
 
 const putEmployees = (employee) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE employees SET name= ?, email= ?, password= ?, phone= ?, address= ?, updated_at= ?, role_id= ? WHERE id= ?';
-        const values = [employee.name, employee.email, employee.password, employee.phone, employee.address, employee.updated_at, employee.role_id, employee.id ];
+        const query = 'UPDATE employees SET name= ?, email= ?, phone= ?, address= ?, updated_at= ?, role_id= ? WHERE id= ?';
+        const values = [employee.name, employee.email, employee.phone, employee.address, employee.updated_at, employee.role_id, employee.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -68,8 +81,8 @@ const putEmployees = (employee) => {
 const deleteEmployee = (employee) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'DELETE FROM employees WHERE id= ?';
-        const values = [employee.id ];
+        const query = 'UPDATE employees SET status="Deleted" WHERE id= ?';
+        const values = [employee.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -84,6 +97,7 @@ module.exports = {
     getAllEmployees,
     registerEmployees,
     getEmployee,
+    getEmployeeAll,
     putEmployees,
     deleteEmployee
 };
