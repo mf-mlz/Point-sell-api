@@ -53,9 +53,9 @@ const queryDatabase = (query, values) => {
 
 const getAllSales = () => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM sales', (error, results) => {
+        connection.query('CALL get_complete_info_sale()', (error, results) => {
             if (error) return reject(error);
-            resolve(results);
+            resolve(results[0]);
         });
     });
 };
