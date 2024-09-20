@@ -67,7 +67,7 @@ const validateEmployeeFilter = [
         .trim()
         .isLength({ min: 1 })
         .isString()
-        .matches(/^[A-ZÑ&]{3,4}\d{6}[A-Z0-9]{3}$/),
+        .matches(/^[A-Za-zÑñáéíóúÁÉÍÓÚ ]+$/),
     body('email')
         .optional()
         .trim()
@@ -91,7 +91,7 @@ const validateEmployeeFilter = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: "Ocurrió un error en la validación de los datos de entrada." });
+            return res.status(400).json({ errors: errors });
         }
         next();
     }
