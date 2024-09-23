@@ -24,10 +24,6 @@ const validateEmployee = [
         .trim()
         .isLength({ min: 1 })
         .isString(),
-    // body('password')
-    //     .optional()
-    //     // .isLength({ min: 1 })
-    //     .isString(),
     body('phone')
         .trim()
         .isLength({ min: 1, max: 15 })
