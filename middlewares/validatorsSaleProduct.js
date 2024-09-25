@@ -24,7 +24,6 @@ const validateSaleProduct = [
         .trim()
         .isLength({ min: 1, max: 10 })
         .isNumeric(),
-
     body('salesId')
         .optional()
         .trim()
@@ -35,7 +34,6 @@ const validateSaleProduct = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
