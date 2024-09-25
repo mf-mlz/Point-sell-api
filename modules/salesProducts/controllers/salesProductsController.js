@@ -60,10 +60,10 @@ const filterJoinSalesProducts = async (req, res) => {
         delete data.employeeId;
         const salesData = await salesProductsService.getSalesJoinProducts(data);
         if (salesData.length > 0) {
-            res.status(401).json({ message: `Se encontraron ${salesData.length} registros`, sales: salesData });
+            res.status(200).json({ message: `Se encontraron ${salesData.length} registros`, sales: salesData });
 
         } else {
-            res.status(401).json({ message: `No se encontraron registros` });
+            res.status(200).json({ message: `No se encontraron registros` });
         }
 
     } catch (err) {
