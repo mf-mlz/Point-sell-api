@@ -18,16 +18,35 @@ Cuenta con las siguientes funcionalidades clave:
 
 Este sistema proporciona una solución completa y escalable para cualquier tipo de negocio que requiera un punto de venta robusto y con capacidades avanzadas.
 
-## Instalación
+# Instalación
 Para instalar y ejecutar este sistema de punto de venta, sigue estos pasos:
 
-- Requisitos Previos
--- Asegúrate de tener [Node.js V20.11.0](https://nodejs.org/) y [npm V10.4.0]([https://nodejs.org/](https://www.npmjs.com/)) instalados en tu máquina.
+## Requisitos Previos
+- Asegúrate de tener instalado:
+- [Node.js V20.11.0](https://nodejs.org/)
+- [npm V10.4.0]([https://nodejs.org/](https://www.npmjs.com/))
+
+- Ejecutar los siguientes comandos:
+
+##Clonar Repositorio:
 
 ```sh
 git clone git@github.com:mf-mlz/Point-sell-api.git
 cd poin-sell-api
 ```
+
+# Instalación de Dependencias
+- Instala las dependencias del proyecto utilizando npm:
+```sh
+npm install
+```
+# Ejecutar el Servidor
+- Para ejecutar el servidor de manera profesional utilizando [Nodemon V3.1.0](https://www.npmjs.com/package/nodemon):
+```sh
+nodemon index.js
+```
+> Recomendación: `Tener instalado Laragon 6.0`.
+> Para este proyecto se requiren `Variables de Entorno` mismas que NO están en el repositorio.
 
 
 
