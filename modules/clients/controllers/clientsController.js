@@ -35,9 +35,9 @@ const filterClients = async (req, res) => {
         const clientData = await clientsService.getClient(data);
 
         if (clientData.length > 0) {
-            res.status(401).json({ message: `Se encontraron ${clientData.length} registros`, client: clientData });
+            res.status(200).json({ message: `Se encontraron ${clientData.length} registros`, client: clientData });
         } else {
-            res.status(401).json({ message: `No se encontraron registros` });
+            res.status(200).json({ message: `No se encontraron registros` });
         }
 
     } catch (err) {
