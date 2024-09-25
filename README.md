@@ -17,3 +17,17 @@ Cuenta con las siguientes funcionalidades clave:
 - ![FacturAPI](https://img.shields.io/badge/FacturAPI-007BFF?style=for-the-badge&logo=none&logoColor=white)
 
 Este sistema proporciona una solución completa y escalable para cualquier tipo de negocio que requiera un punto de venta robusto y con capacidades avanzadas.
+
+## Instalación
+Para instalar y ejecutar este sistema de punto de venta, sigue estos pasos:
+
+- Requisitos Previos
+-- Asegúrate de tener [Node.js V20.11.0](https://nodejs.org/) y [npm V10.4.0]([https://nodejs.org/](https://www.npmjs.com/)) instalados en tu máquina.
+
+```sh
+git clone git@github.com:mf-mlz/Point-sell-api.git
+cd poin-sell-api
+```
+
+
+
