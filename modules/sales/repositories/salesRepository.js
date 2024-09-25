@@ -78,7 +78,7 @@ const getSale = (data) => {
             keys = keys.substring(0, keys.length - 2);
         }
 
-        const query = 'SELECT * FROM sales WHERE ' + keys + "";
+        const query = 'SELECT * FROM sales WHERE ' + keys + " AND statusSale = 'Active'";
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -92,10 +92,12 @@ const getSale = (data) => {
 const putSale = (sale) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'UPDATE sales SET date= ?, totalAmount= ?, payment=?, dataPayment=?, customerId= ?, employeesId= ?, status= ?, updated_at= ? WHERE id = ?';
+        const query = 'UPDATE sales SET date= ?, payment=?, dataPayment=?, customerId= ?, employeesId= ?, status= ?, updated_at= ? WHERE id = ?';
         const date = sale.date;
         const formattedDate = date.toISOString().split('T')[0] + ' 00:00:00';
-        const values = [formattedDate, sale.totalAmount, sale.payment, sale.dataPayment, sale.customerId, sale.employeesId, sale.status, sale.updated_at, sale.id];
+        console.log(formattedDate);
+        
+        const values = [formattedDate, sale.payment, sale.dataPayment, sale.customerId, sale.employeesId, sale.status, sale.updated_at, sale.id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -108,7 +110,7 @@ const putSale = (sale) => {
 const deleteSale = (employee) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
-        const query = 'DELETE FROM sales WHERE id= ?';
+        const query = 'UPDATE sales SET statusSale = "Deleted" WHERE id= ?';
         const values = [employee.id];
 
         connection.query(query, values, (error, results) => {
@@ -128,7 +130,7 @@ const getSaleDate = (data) => {
         });
 
         const k = "date > ? AND date < ?";
-        const query = ' SELECT * FROM sales WHERE ' + k + ';';
+        const query = ' SELECT * FROM sales WHERE ' + k + ' AND statusSale = "Active" ;';
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
             const result = JSON.parse(JSON.stringify(results));
