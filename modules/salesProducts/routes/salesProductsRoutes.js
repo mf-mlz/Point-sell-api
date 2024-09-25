@@ -9,6 +9,7 @@ router.get('/', verifyToken, salesProductsController.getAllSalesProducts);
 
 router.post('/register', verifyToken, validateSaleProduct, salesProductsController.registerSalesProducts);
 router.post('/filter', verifyToken, validateSaleProductFilter, salesProductsController.filterSalesProducts);
+router.post('/filterDescription', verifyToken, validateSaleProductFilter, salesProductsController.filterJoinSalesProducts);
 
 router.put('/edit', verifyToken, validateID, validateSaleProduct, verifyAdminRole, salesProductsController.putSalesProducts);
 
