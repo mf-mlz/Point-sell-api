@@ -57,7 +57,7 @@ const getAllSales = async (req, res) => {
 
 const putSale = async (req, res) => {
 
-    const requiredFields = ['id', 'date', 'totalAmount', 'payment', 'dataPayment', 'customerId', 'employeesId', 'status'];
+    const requiredFields = ['id', 'date', 'payment', 'dataPayment', 'customerId', 'employeesId', 'status'];
     const data = req.body;
 
     const missingField = verifyData(requiredFields, data);
