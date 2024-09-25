@@ -50,6 +50,6 @@ nodemon index.js
 > Para este proyecto se requiren `Variables de Entorno` mismas que NO están en el repositorio.
 
 ## License
-[@mf-mlz](https://github.com/mf-mlz)
-[RouterUIZ007](https://github.com/RouterUIZ007)
+- [@mf-mlz](https://github.com/mf-mlz)
+- [@RouterUIZ007](https://github.com/RouterUIZ007)
 
