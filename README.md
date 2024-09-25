@@ -11,9 +11,9 @@ Cuenta con las siguientes funcionalidades clave:
 
 ## Tecnologías Utilizadas:
 - [![NodeJS](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://skills.thijs.gg)
-- Express
+- ![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
 - [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://skills.thijs.gg)
-- WebSockets
-- Facturapi
+- ![WebSockets](https://img.shields.io/badge/WebSockets-010101?style=for-the-badge&logo=websocket&logoColor=white)
+- ![FacturAPI](https://img.shields.io/badge/FacturAPI-007BFF?style=for-the-badge&logo=none&logoColor=white)
 
 Este sistema proporciona una solución completa y escalable para cualquier tipo de negocio que requiera un punto de venta robusto y con capacidades avanzadas.
