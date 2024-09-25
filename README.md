@@ -24,7 +24,7 @@ Para instalar y ejecutar este sistema de punto de venta, sigue estos pasos:
 ## Requisitos Previos
 - Asegúrate de tener instalado:
 - [Node.js V20.11.0](https://nodejs.org/)
-- [npm V10.4.0]([https://nodejs.org/](https://www.npmjs.com/))
+- [npm V10.4.0](https://www.npmjs.com/)
 
 - Ejecutar los siguientes comandos:
 
@@ -46,6 +46,7 @@ npm install
 nodemon index.js
 ```
 > Recomendación: `Tener instalado Laragon 6.0`.
+
 > Para este proyecto se requiren `Variables de Entorno` mismas que NO están en el repositorio.
 
 
