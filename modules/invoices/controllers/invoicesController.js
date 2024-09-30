@@ -53,6 +53,7 @@ const createInvoice = async (req, res) => {
       const dataInsert = {
         id_sale: id_sale,
         id_invoice: responseInvoice.id,
+        folio: responseInvoice.series + responseInvoice.folio_number,
         id_employee: id_employee,
       };
       const registerInvoice = await invoicesService.registerInvoice(dataInsert);
