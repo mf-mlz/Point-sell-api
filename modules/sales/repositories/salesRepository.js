@@ -1,150 +1,212 @@
-const connection = require('../../../config/database');
+const connection = require("../../../config/database");
+const {
+  registerSalesProducts,
+} = require("../../salesProducts/repositories/salesProductsRepository");
 
 const registerSales = async (sale) => {
-    try {
-        const products = sale.products;
+  try {
+    const products = sale.products;
+    let totalAmount = 0;
+    const arryProducts = [];
+    /* Verify Stock Products */
+    for (const product of products) {
+      const q = "call get_stock_product(?);";
+      const v = [product.code];
+      const results = await queryDatabase(q, v);
 
-        // Verificar el stock de todos los productos
-        for (const product of products) {
-            const q = 'call verify_stock(?);';
-            const v = [product.id];
-            const results = await queryDatabase(q, v);
+      if (results[0][0].error_message) {
+        throw new Error(results[0][0].error_message);
+      }
 
-            if (!results || !results.length || !results[0].length) {
-                throw new Error(`Error al verificar el stock del producto ${product.description}`);
-            }
+      const arrayP = results[0][0];
 
-            const arrayP = results[0][0];
+      if (arrayP.stock < product.quantity) {
+        throw new Error(
+          `No hay suficiente stock de producto ${arrayP.name}, solo cuentas con ${arrayP.stock} existencias`
+        );
+      }
 
-            if (arrayP.stock < product.quantity) {
-                throw new Error(`No hay suficiente stock de producto ${product.description}, solo cuentas con ${arrayP.stock} existencias`);
-            }
-        }
+      /* Sum TotalAmount by quantity products * price products */
+      totalAmount += parseFloat(arrayP.price) * parseInt(product.quantity);
 
-        // Insertar la venta en la base de datos
-        const query = 'INSERT INTO sales (date, totalAmount, payment, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?)';
-        const values = [sale.date, sale.totalAmount, sale.payment, sale.dataPayment, sale.customerId, sale.employeesId, sale.status];
-        await queryDatabase(query, values);
+      /* Create Obj Products */
+      const objProduct = {
+        productId: product.id,
+        quantity: product.quantity,
+        total: arrayP.price,
+      };
 
-        // Actualizar el stock de todos los productos
-        for (const product of products) {
-            const q = 'call update_stock(?,?);';
-            const v = [product.id, product.quantity];
-            await queryDatabase(q, v);
-        }
-
-        return 'Venta registrada y stock actualizado correctamente';
-
-    } catch (error) {
-        throw new Error(`Error al registrar la venta: ${error.message}`);
+      arryProducts.push(objProduct);
     }
+
+    /* Insert Sale in sales Table */
+    const resultInsertSale = await insertSale(sale, totalAmount, arryProducts);
+    return resultInsertSale;
+  } catch (error) {
+    throw new Error(`Error al registrar la venta: ${error.message}`);
+  }
+};
+
+/* Function Insert Sale */
+const insertSale = (sale, totalAmount, arryProducts) => {
+  return new Promise((resolve, reject) => {
+    const customerId = sale.customerId ? sale.customerId : null;
+    const query =
+      "INSERT INTO sales (date, totalAmount, payment, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    const date = sale.date;
+    const formattedDate = date.toISOString().split("T")[0] + " 00:00:00";
+    const values = [
+      formattedDate,
+      totalAmount,
+      sale.payment,
+      sale.dataPayment,
+      customerId,
+      sale.employeesId,
+      sale.status,
+    ];
+
+    connection.query(query, values, async (error, results) => {
+      if (error) {
+        return reject(error);
+      }
+
+      const saleId = results.insertId;
+
+      try {
+        const productPromises = arryProducts.map((product) => {
+          const dataSaleProducts = {
+            salesId: saleId,
+            productId: product.productId,
+            quantity: product.quantity,
+            total: product.total,
+          };
+
+          return registerSalesProducts(dataSaleProducts);
+        });
+
+        await Promise.all(productPromises);
+
+        for (const product of sale.products) {
+          const q = "CALL update_stock(?, ?);";
+          const v = [product.code, product.quantity];
+          await queryDatabase(q, v);
+        }
+        resolve(saleId);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
 };
 
 // Función auxiliar para realizar consultas a la base de datos
 const queryDatabase = (query, values) => {
-    return new Promise((resolve, reject) => {
-        connection.query(query, values, (error, results) => {
-            if (error) return reject(error);
-            resolve(results);
-        });
+  return new Promise((resolve, reject) => {
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
     });
+  });
 };
 
-
 const getAllSales = () => {
-    return new Promise((resolve, reject) => {
-        connection.query('CALL get_complete_info_sale()', (error, results) => {
-            if (error) return reject(error);
-            resolve(results[0]);
-        });
+  return new Promise((resolve, reject) => {
+    connection.query("CALL get_complete_info_sale()", (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0]);
     });
+  });
 };
 
 const getSale = (data) => {
-    return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
+    let keys = "";
+    let values = [];
 
-        let keys = "";
-        let values = [];
-
-        Object.entries(data).forEach(([key, value]) => {
-
-            values.push(value);
-            keys += key + " = ? OR ";
-        });
-
-        keys = keys.trim();
-
-        if (keys.endsWith('OR')) {
-            keys = keys.substring(0, keys.length - 2);
-        }
-
-        const query = 'SELECT * FROM sales WHERE ' + keys + " AND statusSale = 'Active'";
-
-        connection.query(query, values, (error, results) => {
-            if (error) return reject(error);
-            const result = JSON.parse(JSON.stringify(results));
-            resolve(result);
-        });
-
+    Object.entries(data).forEach(([key, value]) => {
+      values.push(value);
+      keys += key + " = ? OR ";
     });
+
+    keys = keys.trim();
+
+    if (keys.endsWith("OR")) {
+      keys = keys.substring(0, keys.length - 2);
+    }
+
+    const query =
+      "SELECT * FROM sales WHERE " + keys + " AND statusSale = 'Active'";
+
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      const result = JSON.parse(JSON.stringify(results));
+      resolve(result);
+    });
+  });
 };
 
 const putSale = (sale) => {
-    return new Promise((resolve, reject) => {
-        const now = new Date();
-        const query = 'UPDATE sales SET date= ?, payment=?, dataPayment=?, customerId= ?, employeesId= ?, status= ?, updated_at= ? WHERE id = ?';
-        const date = sale.date;
-        const formattedDate = date.toISOString().split('T')[0] + ' 00:00:00';
-        console.log(formattedDate);
-        
-        const values = [formattedDate, sale.payment, sale.dataPayment, sale.customerId, sale.employeesId, sale.status, sale.updated_at, sale.id];
+  return new Promise((resolve, reject) => {
+    const now = new Date();
+    const query =
+      "UPDATE sales SET date= ?, payment=?, dataPayment=?, customerId= ?, employeesId= ?, status= ?, updated_at= ? WHERE id = ?";
+    const date = sale.date;
+    const formattedDate = date.toISOString().split("T")[0] + " 00:00:00";
 
-        connection.query(query, values, (error, results) => {
-            if (error) return reject(error);
-            resolve('Venta Modificada Correctamente');
-        });
+    const values = [
+      formattedDate,
+      sale.payment,
+      sale.dataPayment,
+      sale.customerId,
+      sale.employeesId,
+      sale.status,
+      sale.updated_at,
+      sale.id,
+    ];
 
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      resolve("Venta Modificada Correctamente");
     });
+  });
 };
 
 const deleteSale = (employee) => {
-    return new Promise((resolve, reject) => {
-        const now = new Date();
-        const query = 'UPDATE sales SET statusSale = "Deleted" WHERE id= ?';
-        const values = [employee.id];
+  return new Promise((resolve, reject) => {
+    const now = new Date();
+    const query = 'UPDATE sales SET statusSale = "Deleted" WHERE id= ?';
+    const values = [employee.id];
 
-        connection.query(query, values, (error, results) => {
-            if (error) return reject(error);
-            resolve('Venta Eliminada Correctamente');
-        });
-
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      resolve("Venta Eliminada Correctamente");
     });
+  });
 };
 
 const getSaleDate = (data) => {
-    return new Promise((resolve, reject) => {
-
-        let values = [];
-        Object.entries(data).forEach(([key, value]) => {
-            values.push(value);
-        });
-
-        const k = "date > ? AND date < ?";
-        const query = ' SELECT * FROM sales WHERE ' + k + ' AND statusSale = "Active" ;';
-        connection.query(query, values, (error, results) => {
-            if (error) return reject(error);
-            const result = JSON.parse(JSON.stringify(results));
-            resolve(result);
-        });
-
+  return new Promise((resolve, reject) => {
+    let values = [];
+    Object.entries(data).forEach(([key, value]) => {
+      values.push(value);
     });
+
+    const k = "date > ? AND date < ?";
+    const query =
+      " SELECT * FROM sales WHERE " + k + ' AND statusSale = "Active" ;';
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      const result = JSON.parse(JSON.stringify(results));
+      resolve(result);
+    });
+  });
 };
 
 module.exports = {
-    registerSales,
-    getAllSales,
-    getSale,
-    putSale,
-    deleteSale,
-    getSaleDate
+  registerSales,
+  getAllSales,
+  getSale,
+  putSale,
+  deleteSale,
+  getSaleDate,
 };
