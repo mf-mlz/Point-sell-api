@@ -37,10 +37,11 @@ const validateSale = [
         .isLength({ min: 1, max: 30 })
         .matches(/^[a-zA-ZÀ-ÿ0-9\s,.'#-]*$/),
     body('customerId')
-        .optional()
+        .optional({ nullable: true })
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
+        
     body('employeesId')
         .optional()
         .trim()
@@ -49,7 +50,7 @@ const validateSale = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: "Ocurrió un error en la validación de los datos de entrada." });
+            return res.status(400).json({ errors: errors});
         }
         next();
     }
@@ -93,7 +94,7 @@ const validateSaleFilter = [
         .isLength({ min: 1, max: 30 })
         .matches(/^[a-zA-ZÀ-ÿ0-9\s,.'#-]*$/),
     body('customerId')
-        .optional()
+        .optional({ nullable: true })
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
