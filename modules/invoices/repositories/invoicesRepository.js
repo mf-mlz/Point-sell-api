@@ -10,8 +10,8 @@ const facturapi = new Facturapi(process.env.FACTURAPI_KEY);
 const registerInvoice = (invoice) => {
   return new Promise((resolve, reject) => {
     const query =
-      "INSERT INTO invoices(id_sale, id_invoice, id_employee) VALUES (?, ?, ?)";
-    const values = [invoice.id_sale, invoice.id_invoice, invoice.id_employee];
+      "INSERT INTO invoices(id_sale, id_invoice, folio, id_employee) VALUES (?, ?, ?, ?)";
+    const values = [invoice.id_sale, invoice.id_invoice, invoice.folio, invoice.id_employee];
 
     connection.query(query, values, (error, results) => {
       if (error) {
