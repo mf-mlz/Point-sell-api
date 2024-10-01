@@ -24,6 +24,7 @@ const verifyRootUser = async (req, res, next) => {
 };
 
 const verifyRolSaleRegister = async (req, res, next) => {
+
     try {
         const idUser = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
         const data = { "id" : idUser };
@@ -33,7 +34,7 @@ const verifyRolSaleRegister = async (req, res, next) => {
 
         if (nameRole === undefined) {
             return res.status(401).json({ message: 'Acceso Denegado: El ID del Empleado no es Válido' });
-        } else if (nameRole !== process.env.ROLE_REGISTER || nameRole !== process.env.ROLE_NAME) {
+        } else if (nameRole !== process.env.ROLE_REGISTER && nameRole !== process.env.ROLE_NAME) {
             return res.status(401).json({ message: 'Acceso Denegado: No cuentas con los permisos necesarios para realizar esta acción.' });
         }
 
