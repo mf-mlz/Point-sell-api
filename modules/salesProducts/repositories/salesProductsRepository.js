@@ -61,7 +61,7 @@ const getSalesJoinProducts = (data) => {
             keys = keys.substring(0, keys.length - 2);
         }
 
-        const query = 'SELECT sales_products.quantity, products.price, products.key_sat, key_products_sat.descripcion as descriptionSat, products.description as descripcion FROM sales_products INNER JOIN products ON sales_products.productId = products.id INNER JOIN key_products_sat ON products.key_sat = key_products_sat.clave WHERE ' + keys + "";
+        const query = 'SELECT sales_products.quantity, sales_products.total as price, products.key_sat, key_products_sat.descripcion as descriptionSat, products.description as descripcion FROM sales_products INNER JOIN products ON sales_products.productId = products.id INNER JOIN key_products_sat ON products.key_sat = key_products_sat.clave WHERE ' + keys + "";
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
