@@ -78,11 +78,11 @@ const putEmployees = (employee) => {
     });
 };
 
-const deleteEmployee = (employee) => {
+const deleteEmployee = (id) => {
     return new Promise((resolve, reject) => {
         const now = new Date();
         const query = 'UPDATE employees SET status="Deleted" WHERE id= ?';
-        const values = [employee.id];
+        const values = [id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);

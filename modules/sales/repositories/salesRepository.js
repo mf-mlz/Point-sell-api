@@ -171,11 +171,11 @@ const putSale = (sale) => {
   });
 };
 
-const deleteSale = (employee) => {
+const deleteSale = (id) => {
   return new Promise((resolve, reject) => {
     const now = new Date();
     const query = 'UPDATE sales SET statusSale = "Deleted" WHERE id= ?';
-    const values = [employee.id];
+    const values = [id];
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
@@ -184,7 +184,7 @@ const deleteSale = (employee) => {
   });
 };
 
-const getSaleDate = (data) => {
+const postSaleDate = (data) => {
   return new Promise((resolve, reject) => {
     let values = [];
     Object.entries(data).forEach(([key, value]) => {
@@ -208,5 +208,5 @@ module.exports = {
   getSale,
   putSale,
   deleteSale,
-  getSaleDate,
+  postSaleDate,
 };

@@ -30,8 +30,10 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:4200',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'employeeId']
+    allowedHeaders: ['Content-Type', 'employeeId'],
+    credentials: true
 }));
+
 
 // app.use(limiter);
 app.use(express.json({ limit: '10kb' }));

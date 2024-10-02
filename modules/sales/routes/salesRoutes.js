@@ -12,9 +12,9 @@ router.get('/', verifyToken, salesController.getAllSales);
 router.post('/register', verifyToken, validateSale, verifyRolSaleRegister, salesController.registerSales);
 router.post('/registerPayment', verifyToken, validateSale, verifyRolSaleRegister, salesController.registerSales);
 router.post('/filter', verifyToken, validateSaleFilter, salesController.filterSales);
-router.post('/getSaleDate', verifyToken, validateSaleFilter, salesController.getSaleDate);
+router.post('/postSaleDate', verifyToken, validateSaleFilter, salesController.postSaleDate);
 router.put('/edit', verifyToken, validateID, validateSale, verifyRootUser, salesController.putSale);
-router.delete('/delete', verifyToken, validateID, verifyRootUser, salesController.deleteSale);
+router.delete('/delete/:id', verifyToken, validateID, verifyRootUser, salesController.deleteSale);
 router.post('/payment', verifyToken, verifyRolSaleRegister, processPayment);
 
 module.exports = router;

@@ -106,17 +106,7 @@ const putSale = async (req, res) => {
 };
 
 const deleteSale = async (req, res) => {
-  const requiredFields = ["id"];
-  const data = req.body;
-
-  const missingField = verifyData(requiredFields, data);
-  if (missingField) {
-    return res
-      .status(400)
-      .json({ error: `El campo ${missingField} es requerido` });
-  }
-
-  const { id } = data;
+const data = req.params.id;
 
   try {
     const deleteSaleServices = await salesService.deleteSale(data);
@@ -126,17 +116,17 @@ const deleteSale = async (req, res) => {
   }
 };
 
-const getSaleDate = async (req, res) => {
+const postSaleDate = async (req, res) => {
   const data = req.body;
   try {
     delete data.employeeId;
-    const getSaleDate = await salesService.getSaleDate(data);
-    if (getSaleDate.length > 0) {
+    const postSaleDate = await salesService.postSaleDate(data);
+    if (postSaleDate.length > 0) {
       res
         .status(200)
         .json({
-          message: `Se encontraron ${getSaleDate.length} registros`,
-          sales: getSaleDate,
+          message: `Se encontraron ${postSaleDate.length} registros`,
+          sales: postSaleDate,
         });
     } else {
       res.status(200).json({ message: `No se encontraron registros` });
@@ -154,5 +144,5 @@ module.exports = {
   getAllSales,
   putSale,
   deleteSale,
-  getSaleDate,
+  postSaleDate,
 };

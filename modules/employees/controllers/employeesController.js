@@ -113,21 +113,21 @@ const login = async (req, res) => {
           name: employeeData[0].name,
           email: employeeData[0].email,
           phone: employeeData[0].phone,
-          role_id: employeeData[0].role_id,
           role_name: employeeData[0].role_name,
         };
 
         const options = {
           algorithm: "ES256",
-          expiresIn: "24h",
+          expiresIn: "2m",
         };
 
         const token = jwt.sign(payload, pKey, options);
 
         res.cookie("token", token, {
-          httpOnly: true, 
-          secure: true, 
-          maxAge: 24 * 60 * 60 * 1000,
+          httpOnly: false, 
+          secure: false, /* Production => true */ 
+          sameSite: 'Lax',
+          maxAge: 2 * 60 * 1000,
           sameSite: "Strict", 
         });
 
@@ -182,20 +182,10 @@ const putEmployees = async (req, res) => {
 };
 
 const deleteEmployee = async (req, res) => {
-  const requiredFields = ["id"];
-  const data = req.body;
-
-  const missingField = verifyData(requiredFields, data);
-  if (missingField) {
-    return res
-      .status(200)
-      .json({ error: `El campo ${missingField} es requerido` });
-  }
-
-  const { id } = data;
+  const id = req.params.id;
 
   try {
-    const deleteEmployeeServices = await employeesService.deleteEmployee(data);
+    const deleteEmployeeServices = await employeesService.deleteEmployee(id);
     res.status(200).json({ message: deleteEmployeeServices });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -204,7 +194,7 @@ const deleteEmployee = async (req, res) => {
 
 const logout = async (req, res)=>{
   res.clearCookie('token');
-  res.json({ message: 'Logout exitoso' });
+  res.json({ message: 'Sesión Finalizada' });
 }
 
 module.exports = {

@@ -1,12 +1,15 @@
 const employeesService = require('../modules/employees/services/employeesService');
 const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
 const verifyRootUser = async (req, res, next) => {
     try {
-        const idUser = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
-        const data = { "id" : idUser };
+        const token = req.cookies.token;
+        const payload = jwt.decode(token);
+        
+        const data = { "id" : payload.id };
 
         const employeeData = await employeesService.getEmployee(data);
         const nameRole = employeeData[0]?.role_name;
@@ -26,8 +29,10 @@ const verifyRootUser = async (req, res, next) => {
 const verifyRolSaleRegister = async (req, res, next) => {
 
     try {
-        const idUser = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
-        const data = { "id" : idUser };
+        const token = req.cookies.token;
+        const payload = jwt.decode(token);
+
+        const data = { "id" : payload.id };
 
         const employeeData = await employeesService.getEmployee(data);
         const nameRole = employeeData[0]?.role_name;

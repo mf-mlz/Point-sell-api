@@ -146,7 +146,7 @@ const sendEmail = async (req, res) => {
 /* Download Invoice */
 const downloadInvoice = async (req, res) => {
   try {
-    const { id_invoice } = req.body;
+    const { id_invoice } = req.params.id;
 
     const zipStream = await invoicesService.downloadInvoice(id_invoice);
     res.setHeader("Content-Disposition", "attachment; filename=factura.zip");
@@ -191,7 +191,7 @@ const cancelInvoice = async (req, res) => {
 };
 
 const getInvoicesByIdSale = async (req, res) => {
-  const data = req.body;
+  const data = req.params.id;
 
   try {
     const response = await invoicesService.getInvoicesByIdSale(data);

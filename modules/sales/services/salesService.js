@@ -19,8 +19,8 @@ const putSale = (sale) => {
 const deleteSale = (sale) => {
     return salesRepository.deleteSale(sale);
 };
-const getSaleDate = (sale) => {
-    return salesRepository.getSaleDate(sale);
+const postSaleDate = (sale) => {
+    return salesRepository.postSaleDate(sale);
 };
 
 module.exports = {
@@ -29,5 +29,5 @@ module.exports = {
     getSale,
     putSale,
     deleteSale,
-    getSaleDate
+    postSaleDate
 };

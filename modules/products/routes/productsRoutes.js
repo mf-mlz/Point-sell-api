@@ -43,7 +43,7 @@ router.post('/upload', handleFileUpload, verifyToken, (req, res, next) => {
 
 router.put('/edit', verifyToken, validateID, validateProduct, verifyRootUser, productsController.putProducts);
 
-router.delete('/delete', verifyToken, validateID, verifyRootUser, productsController.deleteProduct);
+router.delete('/delete/:id', verifyToken, validateID, verifyRootUser, productsController.deleteProduct);
 
 
 module.exports = router;

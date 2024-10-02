@@ -106,11 +106,11 @@ const putProducts = (product) => {
   });
 };
 
-const deleteProduct = (employee) => {
+const deleteProduct = (id) => {
   return new Promise((resolve, reject) => {
     const now = new Date();
     const query = 'UPDATE products SET status="Deleted" WHERE id= ?';
-    const values = [employee.id];
+    const values = [id];
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
