@@ -12,6 +12,7 @@ const salesProductsRoutes = require('./modules/salesProducts/routes/salesProduct
 const invoicesRoutes = require('./modules/invoices/routes/invoicesRoutes');
 const { requestLogger } = require('./middlewares/logMiddleware');
 const paymentsFormRoutes = require('./modules/paymentsForm/routes/paymentsFormRoutes');
+const cookieParser = require('cookie-parser');
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use(cors({
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(requestLogger);
+app.use(cookieParser());
 
 app.use('/api/clients', clientsRoutes);
 app.use('/api/employees', employeesRoutes);
