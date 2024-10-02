@@ -85,7 +85,7 @@ const filterEmployeesAll = async (req, res) => {
   }
 };
 
-const loginEmployees = async (req, res) => {
+const login = async (req, res) => {
   const requiredFields = ["email", "password"];
   const data = req.body;
 
@@ -119,7 +119,7 @@ const loginEmployees = async (req, res) => {
 
         const options = {
           algorithm: "ES256",
-          expiresIn: "9h",
+          expiresIn: "24h",
         };
 
         const token = jwt.sign(payload, pKey, options);
@@ -127,13 +127,13 @@ const loginEmployees = async (req, res) => {
         res.cookie("token", token, {
           httpOnly: true, 
           secure: true, 
-          maxAge: 9 * 60 * 60 * 1000, 
+          maxAge: 24 * 60 * 60 * 1000,
           sameSite: "Strict", 
         });
 
         res
           .status(200)
-          .json({ message: `Inicio de sesión exitoso`, token });
+          .json({ message: `Inicio de sesión exitoso`});
       } else {
         res
           .status(401)
@@ -202,12 +202,18 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
+const logout = async (req, res)=>{
+  res.clearCookie('token');
+  res.json({ message: 'Logout exitoso' });
+}
+
 module.exports = {
   getAllEmployees,
   registerEmployees,
-  loginEmployees,
+  login,
   filterEmployees,
   filterEmployeesAll,
   putEmployees,
   deleteEmployee,
+  logout
 };
