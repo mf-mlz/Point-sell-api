@@ -1,7 +1,13 @@
-const { body, validationResult, check } = require('express-validator');
+const { body, validationResult, check, param } = require('express-validator');
 
 const validateID = [
     body('id')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id')
+        .optional()
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
@@ -63,6 +69,11 @@ const validateSaleFilter = [
         }
         return true;
     }),
+    param('id')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
     body('id')
         .optional()
         .trim()

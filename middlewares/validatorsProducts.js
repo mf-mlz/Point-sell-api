@@ -1,14 +1,20 @@
-const { body, validationResult, check } = require('express-validator');
+const { body, validationResult, check, param } = require('express-validator');
 
 const validateID = [
     body('id')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id')
+        .optional()
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors });
+            return res.status(400).json({ errors: "Ocurrió un error en la validación de los datos de entrada." });
         }
         next();
     }
@@ -49,7 +55,7 @@ const validateProduct = [
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors });
+            return res.status(400).json({ errors: "Ocurrió un error en la validación de los datos de entrada." });
         }
         next();
     }

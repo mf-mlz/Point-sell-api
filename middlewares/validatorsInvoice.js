@@ -1,7 +1,13 @@
-const { body, validationResult, check } = require('express-validator');
+const { body, validationResult, check, param } = require('express-validator');
 
 const validateID = [
     body('id_sale')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id_sale')
+        .optional()
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
@@ -15,7 +21,7 @@ const validateID = [
 ];
 
 const validateIdDownload = [
-    body('id_invoice')
+    param('id_invoice')
         .trim()
         .isLength({ min: 1 })
         .matches(/^[a-z0-9]+$/),
@@ -34,6 +40,11 @@ const validateInvoice = [
         .isLength({ min: 1 })
         .isNumeric(),
     body('id_sale')
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id_sale')
+        .optional()
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),

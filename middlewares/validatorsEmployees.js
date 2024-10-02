@@ -1,7 +1,13 @@
-const { body, validationResult, check } = require('express-validator');
+const { body, param, validationResult, check } = require('express-validator');
 
 const validateID = [
     body('id')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id')
+        .optional()
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
@@ -54,6 +60,11 @@ const validateEmployeeFilter = [
         return true;
     }),
     body('id')
+        .optional()
+        .trim()
+        .isLength({ min: 1 })
+        .isNumeric(),
+    param('id')
         .optional()
         .trim()
         .isLength({ min: 1 })
