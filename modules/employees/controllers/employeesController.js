@@ -118,7 +118,7 @@ const login = async (req, res) => {
 
         const options = {
           algorithm: "ES256",
-          expiresIn: "2m",
+          expiresIn: "7d",
         };
 
         const token = jwt.sign(payload, pKey, options);
@@ -127,7 +127,7 @@ const login = async (req, res) => {
           httpOnly: false, 
           secure: false, /* Production => true */ 
           sameSite: 'Lax',
-          maxAge: 2 * 60 * 1000,
+          maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: "Strict", 
         });
 
