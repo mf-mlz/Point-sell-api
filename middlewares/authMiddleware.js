@@ -3,53 +3,53 @@ const fs = require('fs');
 const path = require('path');
 const { deleteFile } = require('../utils/files');
 /* Key ECDSA (ES256) */
-const dotenv = require("dotenv");
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), 'utf8');
+const pubKey = fs.readFileSync(path.join(process.cwd(), process.env.KNP), 'utf8');
 
 const verifyToken = (req, res, next) => {
 
-    const token = req.header('Authorization')?.split(' ')[1];
-
+    const token = req.cookies.token;
+    
     if (!token) {
         if (req.file) {
             deleteFile(req.file)
                 .then(() => {
-                    return res.status(401).json({ message: 'La Petición no tiene Cabecera de Autorización y se eliminó correctamente el archivo' });
+                    return res.status(401).json({ message: 'Acceso denegado: Falló la Autenticación' });
                 })
                 .catch(error => {
-                    return res.status(500).json({ message: 'La Petición no tiene Cabecera de Autorización y ocurrió un error al eliminar el archivo' });
+                    return res.status(401).json({ message: 'Acceso denegado: Falló la Autenticación' });
                 });
         } else {
-            return res.status(401).json({ message: 'La Petición no tiene Cabecera de Autorización' });
+            return res.status(401).json({ message: 'Acceso denegado: Falló la Autenticación' });
         }
     } else {
         try {
             
-            jwt.verify(token, pKey, { algorithms: ['ES256'] }, (err, decoded) => {
+            jwt.verify(token, pubKey, { algorithms: ['ES256'] }, (err, decoded) => {
                 if (err) {
                     if (req.file) {
                         deleteFile(req.file)
                             .then(() => {
-                                return res.status(500).json({ message: 'Falló la Autenticación y se eliminó correctamente el archivo' });
+                                return res.status(401).json({ message: 'Acceso denegado: Falló la Autenticación' });
                             })
                             .catch(error => {
-                                return res.status(500).json({ message: 'Falló la Autenticación y ocurrió un error al eliminar el archivo' });
+                                return res.status(401).json({ message: 'Acceso denegad: Falló la Autenticación' });
                             });
                     } else {
-                        return res.status(500).json({ message: 'Falló la Autenticación' });
+                        return res.status(401).json({ message: 'Acceso denegado: Falló la Autenticación' });
                     }
                 } else {
                     const idPayload = decoded.id;
-                    const idEmployee = req.body.employeeId || req.query.employeeId || req.params.employeeId || req.headers['employeeid'];
+                    const idEmployee = req.headers['employeeid'];
 
                     if (parseInt(idPayload) !== parseInt(idEmployee)) {
                         if (req.file) {
                             deleteFile(req.file)
                                 .then(() => {
-                                    return res.status(401).json({ message: 'Acceso Denegado: El ID del Empleado no corresponde con el ID de la Sesión y se eliminó correctamente el archivo' });
+                                    return res.status(401).json({ message: 'Acceso Denegado: El ID del Empleado no corresponde con el ID de la Sesión' });
                                 })
                                 .catch(error => {
-                                    return res.status(500).json({ message: 'Falló la Autenticación y ocurrió un error al eliminar el archivo' });
+                                    return res.status(401).json({ message: 'Acceso Denegado: Falló la Autenticación' });
                                 });
                         } else {
                             return res.status(401).json({ message: 'Acceso Denegado: El ID del Empleado no corresponde con el ID de la Sesión' });
@@ -61,7 +61,7 @@ const verifyToken = (req, res, next) => {
             });
 
         } catch (err) {
-            res.status(400).json({ message: 'Acceso Inválido' });
+            res.status(401).json({ message: 'Acceso Inválido' });
         }
     }
 
