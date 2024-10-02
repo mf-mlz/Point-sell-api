@@ -70,3 +70,6 @@ debug/
 
 #Ignore Files
 uploads/
+
+#Ignored Keys
+/keys

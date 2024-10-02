@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const { deleteFile } = require('../utils/files');
+/* Key ECDSA (ES256) */
+const dotenv = require("dotenv");
+const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), 'utf8');
 
 const verifyToken = (req, res, next) => {
 
@@ -22,7 +25,7 @@ const verifyToken = (req, res, next) => {
     } else {
         try {
             
-            jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            jwt.verify(token, pKey, { algorithms: ['ES256'] }, (err, decoded) => {
                 if (err) {
                     if (req.file) {
                         deleteFile(req.file)
