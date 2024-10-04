@@ -210,6 +210,39 @@ const recoverPassword = async (req, res) => {
     return res.status(200).json({ data: 'Correo de recuperación enviado a ' + paylod.email });
 };
 
+const verificationToReset = async (req, res) => {
+
+    const { token, password } = req.body;
+    if (!token) {
+        return res.status(400).send('Token es requerido');
+    }
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.SECRET_NODE);
+    } catch (error) {
+        return res.status(400).send('Token inválido o expirado');
+    }
+
+    let employeeData;
+    try {
+        const d = { email: decoded.email };
+        employeeData = await employeesService.getEmployee(d);
+        if (!employeeData.length) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+    } catch (error) {
+        return res.status(400).send('Error al obtener Usuarios');
+    }
+
+    try {
+        const hashedPassword = await passwordService.hashPassword(password);
+        employeeData[0].password = hashedPassword;
+    } catch (error) {
+        return res.status(400).send('Hash no generado');
+    }
+
+};
 
 module.exports = {
     getAllEmployees,
@@ -218,5 +251,7 @@ module.exports = {
     filterEmployees,
     filterEmployeesAll,
     putEmployees,
-    deleteEmployee
+    deleteEmployee,
+    recoverPassword,
+    verificationToReset
 };

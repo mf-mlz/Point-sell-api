@@ -16,5 +16,6 @@ router.put('/edit', verifyToken, verifyAdminRole, validateID, validateEmployee, 
 router.delete('/delete', verifyToken, verifyAdminRole, validateID, employeesController.deleteEmployee);
 
 router.post('/recover', employeesController.recoverPassword);
+router.post('/verification', verifyToken, employeesController.verificationToReset);
 
 module.exports = router;
