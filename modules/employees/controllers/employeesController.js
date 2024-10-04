@@ -3,9 +3,20 @@ const passwordService = require('../services/passwordService');
 const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-
+const nodemailer = require('nodemailer');
 
 dotenv.config();
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SERVICE_NODE,
+    port: process.env.PORT_NODE,
+    secure: process.env.SECURITY_NODE, // true for port 465, false for other ports
+    auth: {
+        user: process.env.EMAIL_NODE,
+        pass: process.env.PW_NODE,
+    },
+});
+
 const registerEmployees = async (req, res) => {
 
     const requiredFields = ['name', 'email', 'password', 'phone', 'address', 'role_id'];
@@ -96,7 +107,7 @@ const loginEmployees = async (req, res) => {
                 
                 const options = {
                     algorithm: 'HS256',
-                    expiresIn: '2h'
+                    expiresIn: '23h'
                 };
 
                 const token = jwt.sign(payload, process.env.JWT_SECRET, options);
@@ -170,6 +181,34 @@ const deleteEmployee = async (req, res) => {
     }
 };
 
+const recoverPassword = async (req, res) => {
+
+    const data = req.body;
+
+    const employeeData = await employeesService.getEmployee(data);
+    if (!employeeData.length > 0) {
+        res.status(200).json({ message: `Usurio no encontrado` });
+    }
+    const paylod = {
+        email: employeeData[0].email
+    }
+    const options = {
+        algorithm: 'HS256',
+        expiresIn: '1h'
+    };
+    const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
+    const url = `${process.env.URL_NODE}${tokenRecover}`;
+
+    const info = await transporter.sendMail({
+        from: '"Sistemas Point Sell"', // sender address
+        to: paylod.email, // list of receivers
+        subject: "Recuperación de contraseña 🪪", // Subject line
+        text: "", // plain text body
+        html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`, // html body
+    });
+    console.log("Message sent: %s", info.messageId);
+    return res.status(200).json({ data: 'Correo de recuperación enviado a ' + paylod.email });
+};
 
 
 module.exports = {
