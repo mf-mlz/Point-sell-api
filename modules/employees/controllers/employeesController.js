@@ -1,12 +1,12 @@
 /* Key ECDSA (ES256) */
+const fs = require("fs");
+const path = require("path");
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), 'utf8');
 const employeesService = require('../services/employeesService');
 const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-const fs = require("fs");
-const path = require("path");
 const nodemailer = require('nodemailer');
 
 dotenv.config();
