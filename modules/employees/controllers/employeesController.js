@@ -242,6 +242,13 @@ const verificationToReset = async (req, res) => {
         return res.status(400).send('Hash no generado');
     }
 
+    try {
+        employeeData[0].updated_at = createUpdatetAt();
+        const updateEmployeesServices = await employeesService.putEmployeesPs(employeeData[0]); // Asegúrate de pasar `employeeData`
+        return res.status(200).json({ message: updateEmployeesServices });
+    } catch (error) {
+        return res.status(400).send('Contraseña no actualizada');
+    }
 };
 
 module.exports = {
