@@ -96,6 +96,7 @@ const filterEmployeesAll = async (req, res) => {
     }
 };
 
+
 const login = async (req, res) => {
     const requiredFields = ["email", "password"];
     const data = req.body;
@@ -160,48 +161,6 @@ const login = async (req, res) => {
     }
 };
 
-const { email, password } = data;
-
-try {
-
-    const searchData = { email: email };
-    const employeeData = await employeesService.getEmployee(searchData);
-
-    if (employeeData.length > 0) {
-
-        const verifyPassword = await passwordService.verifyPassword(password, employeeData[0].password);
-        if (verifyPassword) {
-
-            const payload = {
-                id: employeeData[0].id,
-                name: employeeData[0].name,
-                email: employeeData[0].email,
-                phone: employeeData[0].phone,
-                role_id: employeeData[0].role_id,
-                role_name: employeeData[0].role_name,
-            };
-
-            const options = {
-                algorithm: 'HS256',
-                expiresIn: '23h'
-            };
-
-            const token = jwt.sign(payload, process.env.JWT_SECRET, options);
-
-            res.status(200).json({ message: `Inicio de sesión exitoso`, token: token });
-
-        } else {
-            res.status(401).json({ message: ` La contraseña del correo ${email} es incorrecta.` });
-        }
-
-    } else {
-        res.status(404).json({ message: `El correo ${email} no existe` });
-
-    }
-
-} catch (err) {
-    res.status(500).json({ error: err.message });
-}
 
 
 const getAllEmployees = async (req, res) => {
