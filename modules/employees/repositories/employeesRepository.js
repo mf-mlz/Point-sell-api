@@ -92,6 +92,18 @@ const deleteEmployee = (id) => {
     });
 };
 
+const putEmployeesPs = (employee) => {
+    return new Promise((resolve, reject) => {
+        console.log(employee);
+        const query = 'UPDATE employees SET password= ? WHERE id= ?';
+        const values = [employee.password, employee.id];
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            resolve('Usuario Modificado Correctamente');
+        });
+    });
+};
+
 
 module.exports = {
     getAllEmployees,
@@ -99,5 +111,6 @@ module.exports = {
     getEmployee,
     getEmployeeAll,
     putEmployees,
-    deleteEmployee
+    deleteEmployee,
+    putEmployeesPs
 };
