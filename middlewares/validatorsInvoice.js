@@ -21,7 +21,7 @@ const validateID = [
 ];
 
 const validateIdDownload = [
-    param('id_invoice')
+    param('idInvoice')
         .trim()
         .isLength({ min: 1 })
         .matches(/^[a-z0-9]+$/),
