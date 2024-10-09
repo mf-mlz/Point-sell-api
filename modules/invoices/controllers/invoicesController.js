@@ -57,7 +57,7 @@ const createInvoice = async (req, res) => {
         id_employee: id_employee,
       };
       const registerInvoice = await invoicesService.registerInvoice(dataInsert);
-      
+
       if (registerInvoice) {
         res.status(200).json({ message: "Factura Generada con Éxito" });
       } else {
@@ -146,7 +146,7 @@ const sendEmail = async (req, res) => {
 /* Download Invoice */
 const downloadInvoice = async (req, res) => {
   try {
-    const { id_invoice } = req.params.id;
+    const id_invoice = req.params.idInvoice;
 
     const zipStream = await invoicesService.downloadInvoice(id_invoice);
     res.setHeader("Content-Disposition", "attachment; filename=factura.zip");
@@ -176,11 +176,9 @@ const cancelInvoice = async (req, res) => {
       if (responsePut) {
         res.status(200).json({ message: "Factura Cancelada con Éxito" });
       } else {
-        res
-          .status(500)
-          .json({
-            message: "Ocurrió un error al Cancelar la Factura en el Registro",
-          });
+        res.status(500).json({
+          message: "Ocurrió un error al Cancelar la Factura en el Registro",
+        });
       }
     } else {
       res.status(500).json({ error: response });
@@ -191,17 +189,16 @@ const cancelInvoice = async (req, res) => {
 };
 
 const getInvoicesByIdSale = async (req, res) => {
-  const data = req.params.id;
+  const data = req.params.idSale;
 
   try {
     const response = await invoicesService.getInvoicesByIdSale(data);
+
     if (response.length > 0) {
-      res
-        .status(200)
-        .json({
-          message: `Se encontraron ${response.length} registros`,
-          invoices: response,
-        });
+      res.status(200).json({
+        message: `Se encontraron ${response.length} registros`,
+        invoices: response,
+      });
     } else {
       res.status(200).json({ message: `No se encontraron registros` });
     }
