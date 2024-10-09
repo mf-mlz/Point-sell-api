@@ -3,7 +3,7 @@ const connection = require("../../../config/database");
 const registerProducts = (product) => {
   return new Promise((resolve, reject) => {
     const query =
-      "INSERT INTO products (name, description, code, price, category, stock, key_sat) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO products (name, description, code, price, category, stock, key_sat) VALUES (?, ?, ?, ?, ?, ?, ?)";
     const values = [
       product.name,
       product.description,
