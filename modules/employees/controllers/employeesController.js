@@ -200,6 +200,78 @@ const logout = async (req, res)=>{
   res.json({ message: 'Sesión Finalizada' });
 }
 
+
+
+const recoverPassword = async (req, res) => {
+
+  const data = req.body;
+
+  const employeeData = await employeesService.getEmployee(data);
+  if (!employeeData.length > 0) {
+      res.status(200).json({ message: `Usurio no encontrado` });
+  }
+  const paylod = {
+      email: employeeData[0].email
+  }
+  const options = {
+      algorithm: 'HS256',
+      expiresIn: '1h'
+  };
+  const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
+  const url = `${process.env.URL_NODE}${tokenRecover}`;
+
+  const info = await transporter.sendMail({
+      from: '"Sistemas Point Sell"', // sender address
+      to: paylod.email, // list of receivers
+      subject: "Recuperación de contraseña 🪪", // Subject line
+      text: "", // plain text body
+      html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`, // html body
+  });
+  console.log("Message sent: %s", info.messageId);
+  return res.status(200).json({ data: 'Correo de recuperación enviado a ' + paylod.email });
+};
+
+const verificationToReset = async (req, res) => {
+
+  const { token, password } = req.body;
+  if (!token) {
+      return res.status(400).send('Token es requerido');
+  }
+
+  let decoded;
+  try {
+      decoded = jwt.verify(token, process.env.SECRET_NODE);
+  } catch (error) {
+      return res.status(400).send('Token inválido o expirado');
+  }
+
+  let employeeData;
+  try {
+      const d = { email: decoded.email };
+      employeeData = await employeesService.getEmployee(d);
+      if (!employeeData.length) {
+          return res.status(404).json({ message: 'Usuario no encontrado' });
+      }
+  } catch (error) {
+      return res.status(400).send('Error al obtener Usuarios');
+  }
+
+  try {
+      const hashedPassword = await passwordService.hashPassword(password);
+      employeeData[0].password = hashedPassword;
+  } catch (error) {
+      return res.status(400).send('Hash no generado');
+  }
+
+  try {
+      employeeData[0].updated_at = createUpdatetAt();
+      const updateEmployeesServices = await employeesService.putEmployeesPs(employeeData[0]); // Asegúrate de pasar `employeeData`
+      return res.status(200).json({ message: updateEmployeesServices });
+  } catch (error) {
+      return res.status(400).send('Contraseña no actualizada');
+  }
+};
+
 module.exports = {
   getAllEmployees,
   registerEmployees,
@@ -208,5 +280,7 @@ module.exports = {
   filterEmployeesAll,
   putEmployees,
   deleteEmployee,
-  logout
+  logout,
+  recoverPassword,
+  verificationToReset
 };
