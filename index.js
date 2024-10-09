@@ -14,6 +14,8 @@ const { requestLogger } = require('./middlewares/logMiddleware');
 const paymentsFormRoutes = require('./modules/paymentsForm/routes/paymentsFormRoutes');
 const cookieParser = require('cookie-parser');
 
+const validator = require('./services/jwt');
+
 dotenv.config();
 
 const app = express();
@@ -30,7 +32,7 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:4200',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'employeeId'],
+    allowedHeaders: ['Content-Type', 'session-employee'],
     credentials: true
 }));
 
@@ -41,6 +43,7 @@ app.use(express.urlencoded({ limit: '10kb', extended: true }));
 app.use(requestLogger);
 app.use(cookieParser());
 
+app.use('/api/validate', validator);
 app.use('/api/clients', clientsRoutes);
 app.use('/api/employees', employeesRoutes);
 app.use('/api/products', productsRoutes);
