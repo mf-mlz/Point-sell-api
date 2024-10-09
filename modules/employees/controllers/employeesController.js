@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
+const { encryptCrypt } = require("../../../utils/crypto-js");
 
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), 'utf8');
@@ -111,29 +112,31 @@ const login = async (req, res) => {
         const payload = {
           id: employeeData[0].id,
           name: employeeData[0].name,
-          email: employeeData[0].email,
-          phone: employeeData[0].phone,
           role_name: employeeData[0].role_name,
         };
 
+       const payloadEncrypt = encryptCrypt(JSON.stringify(payload));
+       
         const options = {
           algorithm: "ES256",
           expiresIn: "7d",
         };
 
-        const token = jwt.sign(payload, pKey, options);
+        const token = jwt.sign({
+          data: payloadEncrypt
+        }, pKey, options);
 
         res.cookie("token", token, {
-          httpOnly: false, 
+          httpOnly: true, 
           secure: false, /* Production => true */ 
           sameSite: 'Lax',
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "Strict", 
+          sameSite: "strict", 
         });
 
         res
           .status(200)
-          .json({ message: `Inicio de sesión exitoso`});
+          .json({ message: `Inicio de sesión exitoso`, data: payloadEncrypt});
       } else {
         res
           .status(401)
