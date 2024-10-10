@@ -52,13 +52,15 @@ const insertSale = (sale, totalAmount, arryProducts) => {
   return new Promise((resolve, reject) => {
     const customerId = sale.customerId ? sale.customerId : null;
     const query =
-      "INSERT INTO sales (date, totalAmount, payment, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO sales (date, totalAmount, payment, amount, changeAmount, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const date = sale.date;
     const formattedDate = date.toISOString().split("T")[0] + " 00:00:00";
     const values = [
       formattedDate,
       totalAmount,
       sale.payment,
+      sale.amount,
+      sale.changeAmount,
       sale.dataPayment,
       customerId,
       sale.employeesId,
