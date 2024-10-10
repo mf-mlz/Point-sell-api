@@ -56,6 +56,8 @@ const validateProduct = [
         .isISO8601()
         .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
         .toDate(),
+    body('isGranular')
+        .isBoolean(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -109,6 +111,9 @@ const validateProductFilter = [
         .isISO8601()
         .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
         .toDate(),
+    body('isGranular')
+        .optional()
+        .isBoolean(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

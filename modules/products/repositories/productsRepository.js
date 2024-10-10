@@ -3,7 +3,7 @@ const connection = require("../../../config/database");
 const registerProducts = (product) => {
   return new Promise((resolve, reject) => {
     const query =
-      "INSERT INTO products (name, description, code, price, category, stock, key_sat, expiration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO products (name, description, code, price, category, stock, key_sat, expiration_date, isGranular) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const values = [
       product.name,
       product.description,
@@ -13,6 +13,7 @@ const registerProducts = (product) => {
       product.stock,
       product.key_sat,
       product.expiration_date,
+      product.isGranular
     ];
 
     connection.query(query, values, (error, results) => {
@@ -86,8 +87,11 @@ const getProduct = (data) => {
 const putProducts = (product) => {
   return new Promise((resolve, reject) => {
     const now = new Date();
+    const expiration_date = product.expiration_date;
+    const formattedExpirationDate = expiration_date.toISOString().split("T")[0];
+    
     const query =
-      "UPDATE products SET name= ?, description= ?, code=?, price= ?, category= ?, stock= ?, key_sat=?, updated_at= ?, expiration_date=? WHERE id= ?";
+      "UPDATE products SET name= ?, description= ?, code=?, price= ?, category= ?, stock= ?, key_sat=?, updated_at= ?, expiration_date=?, isGranular=? WHERE id= ?";
     const values = [
       product.name,
       product.description,
@@ -97,8 +101,9 @@ const putProducts = (product) => {
       product.stock,
       product.key_sat,
       product.updated_at,
+      formattedExpirationDate,
+      product.isGranular,
       product.id,
-      product.expiration_date
     ];
 
     connection.query(query, values, (error, results) => {
