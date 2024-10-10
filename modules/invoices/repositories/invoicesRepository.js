@@ -11,7 +11,12 @@ const registerInvoice = (invoice) => {
   return new Promise((resolve, reject) => {
     const query =
       "INSERT INTO invoices(id_sale, id_invoice, folio, id_employee) VALUES (?, ?, ?, ?)";
-    const values = [invoice.id_sale, invoice.id_invoice, invoice.folio, invoice.id_employee];
+    const values = [
+      invoice.id_sale,
+      invoice.id_invoice,
+      invoice.folio,
+      invoice.id_employee,
+    ];
 
     connection.query(query, values, (error, results) => {
       if (error) {
@@ -100,13 +105,11 @@ const putStatusInvoice = (data) => {
 
 const getInvoicesByIdSale = (id_sale) => {
   return new Promise((resolve, reject) => {
-    const query =
-      "SELECT invoices.*, e1.name AS employee_name, e2.name AS employee_cancel_name FROM invoices LEFT JOIN employees AS e1 ON invoices.id_employee = e1.id LEFT JOIN employees AS e2 ON invoices.id_employee_cancel = e2.id WHERE invoices.id_sale = ?;";
+    const query = "call GetInvoiceDetailsBySaleId(?)";
     const values = [id_sale];
-
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
-      resolve(results);
+      resolve(results[0]);
     });
   });
 };

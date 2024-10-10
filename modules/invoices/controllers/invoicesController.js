@@ -193,7 +193,7 @@ const getInvoicesByIdSale = async (req, res) => {
 
   try {
     const response = await invoicesService.getInvoicesByIdSale(data);
-
+    
     if (response.length > 0) {
       res.status(200).json({
         message: `Se encontraron ${response.length} registros`,
