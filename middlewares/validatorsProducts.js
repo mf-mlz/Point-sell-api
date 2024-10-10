@@ -52,6 +52,10 @@ const validateProduct = [
         .trim()
         .isLength({ min: 1, max: 20 })
         .matches(/([0-9])/),
+    body('expiration_date')
+        .isISO8601()
+        .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
+        .toDate(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -100,6 +104,11 @@ const validateProductFilter = [
         .trim()
         .isLength({ min: 1, max: 20 })
         .matches(/([0-9])/),
+    body('expiration_date')
+        .optional()
+        .isISO8601()
+        .withMessage('Formato de fecha incorrecto'/* 'La fecha debe estar en el formato YYYY-MM-DD' */)
+        .toDate(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
