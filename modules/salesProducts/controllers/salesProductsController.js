@@ -3,7 +3,7 @@ const productsService = require("../../products/services/productsService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
 const dotenv = require("dotenv");
 const PDFDocument = require("pdfkit");
-
+const QRCode = require("qrcode");
 dotenv.config();
 
 const registerSalesProducts = async (req, res) => {
@@ -143,8 +143,8 @@ const generateTicket = async (req, res) => {
   try {
     delete data.employeeId;
 
-    const id1 = data.salesId;
-    const dataTicket = await salesProductsService.getInfoTicket(id1);
+    const id = data.salesId;
+    const dataTicket = await salesProductsService.getInfoTicket(id);
 
     const doc = new PDFDocument({
       size: "A6",
@@ -156,141 +156,217 @@ const generateTicket = async (req, res) => {
       },
     });
 
-    // Datos del ticket
+    /* Data Ticket */
+    const dateSale = dataTicket[0].date_sale
+      ? formatDateAndHour(dataTicket[0].date_sale)
+      : "";
 
-    const fechaActual = new Date();
+    const dateCurrently = new Date();
+    const day = dateCurrently.getDate();
+    const month = dateCurrently.getMonth() + 1;
+    const year = dateCurrently.getFullYear();
+    const hour = dateCurrently.getHours();
+    const minutes = dateCurrently.getMinutes();
+    const seconds = dateCurrently.getSeconds();
+    const employee = dataTicket[0].employee;
+    const cardNumber =
+      dataTicket[0].paymentForm !== "Efectivo"
+        ? formarCardNumber(dataTicket[0].dataPayment)
+        : "";
 
-    // Obtener la fecha y hora en formato legible
-    const dia = fechaActual.getDate();
-    const mes = fechaActual.getMonth() + 1; // Los meses van de 0 a 11
-    const anio = fechaActual.getFullYear();
-    const horas = fechaActual.getHours();
-    const minutos = fechaActual.getMinutes();
-    const segundos = fechaActual.getSeconds();
+    /* Header Ticket */
+    addCenteredText(doc, "Mi Tiendita", 20);
+    addCenteredText(doc, "RFC: ABCD890899", 35);
+    addCenteredText(doc, "Av. Las Torres #304 Col. El Venado, CDMX", 50);
+    addCenteredText(doc, "Tel. 55-346-78-90", 65);
+    doc.fontSize(10).text(`Núm Venta: ${id}`, 30, 90);
+    doc.fontSize(10).text(`Atendió: ${employee}`, 160, 90);
+    doc.fontSize(10).text(`Fecha: ${dateSale.formattedDate}`, 30, 100);
+    doc.fontSize(10).text(`Hora: ${dateSale.formattedTime}`, 160, 100);
 
-    const cliente = "#56789";
-    const cajero = dataTicket[0].employee;
-    const pay = "Tarjeta de Crédito";
-    const numcar = "1234";
-    const autorizacion = "678912";
+    doc
+      .fontSize(10)
+      .text(
+        `Fecha Impresión: ${day}/${month}/${year} ${hour}:${minutes}:${seconds}`,
+        40,
+        115
+      );
 
-    const cantidad = 1000;
+    /* Products */
+    addCenteredText(doc, "Productos", 130);
 
-    // Encabezado del documento
-    let y = 0;
-    doc.fontSize(12).text("Mi Tiendita", 20, 20);
-    // Datos del cliente
-    doc.fontSize(10).text(`Num.: ${cliente}`, 20, 40);
-
-    doc.fontSize(10).text(`Cajero: ${cajero}`, 120, 40);
-
-    doc.fontSize(10).text(`Fecha: ${dia}/${mes}/${anio}`, 20, 60);
-    doc.fontSize(10).text(`Hora: ${horas}:${minutos}:${segundos}`, 120, 60);
-
-    // Tabla de productos
-    doc.moveDown().fontSize(10).text("Productos:", 20, 80);
-
-    // Encabezado de la tabla
+    /* Header Products Table */
     doc
       .moveDown()
       .fontSize(10)
-      .text("Concepto", 20, 100)
-      .text("Cantidad", 120, 100)
-      .text("Unitario", 180, 100)
-      .text("Total", 240, 100);
+      .text("Concepto", 20, 155)
+      .text("Cantidad", 120, 155)
+      .text("Unitario", 180, 155)
+      .text("Total", 240, 155);
 
-    // Datos de los productos
+    /* Data Products */
+    let yPosition = 0;
     dataTicket.forEach((producto, index) => {
-      const yPosition = 120 + index * 20;
+      yPosition = 170 + index * 20;
 
       doc
         .fontSize(10)
-        .text(producto.name_product.substring(0, 17), 20, yPosition) // Concepto
-        .text(producto.quantity.toString(), 120, yPosition) // Cantidad
-        .text(`$${producto.price_product.toFixed(2)}`, 180, yPosition) // Unitario
+        .text(producto.name_product.substring(0, 17), 20, yPosition)
+        .text(producto.quantity.toString(), 120, yPosition)
+        .text(`$${producto.price_product.toFixed(2)}`, 180, yPosition)
         .text(
           `$${(producto.price_product * producto.quantity).toFixed(2)}`,
           240,
           yPosition
-        ); // Total
+        );
     });
 
-    // SubTotal
+    /* Mounts (Subtotal, Iva, Total) */
     const subtotal = dataTicket[0].total_sale * 0.84;
     const iva = dataTicket[0].total_sale * 0.16;
+    const amount = dataTicket[0].amount;
+    const changeAmount = dataTicket[0].changeAmount;
+    yPosition = yPosition + 35;
 
     doc
       .moveDown()
       .fontSize(10)
-      .text(`SubTotal: $${parseFloat(subtotal.toFixed(2))}`, 177, 180);
-    // Iva
-    doc
-      .moveDown()
-      .fontSize(10)
-      .text(`IVA: $${parseFloat(iva.toFixed(2))}`, 200, 200);
-    // Total
-    doc
-      .moveDown()
-      .fontSize(10)
-      .text(`Total: $${dataTicket[0].total_sale}`, 200, 220);
+      .text(`SubTotal: $${parseFloat(subtotal.toFixed(2))}`, 177, yPosition);
+    yPosition = yPosition + 18;
 
-    if (dataTicket[0].paymentForm === "Efectivo") {
-      // Metodo de Pago
+    doc
+      .moveDown()
+      .fontSize(10)
+      .text(`IVA: $${parseFloat(iva.toFixed(2))}`, 200, yPosition);
+    yPosition = yPosition + 18;
+
+    doc
+      .moveDown()
+      .fontSize(10)
+      .text(`Total: $${dataTicket[0].total_sale}`, 200, yPosition);
+    yPosition = yPosition + 25;
+
+    /* Amount and ChangeAmount */
+    doc
+      .moveDown()
+      .fontSize(10)
+      .text(`Recibido: $${parseFloat(amount.toFixed(2))}`, 190, yPosition);
+    yPosition = yPosition + 11.9;
+
+    doc
+      .moveDown()
+      .fontSize(10)
+      .text(`Cambio: $${parseFloat(changeAmount.toFixed(2))}`, 190, yPosition);
+    yPosition = yPosition + 20;
+
+    doc
+      .moveDown()
+      .fontSize(10)
+      .text(`Método de Pago: ${dataTicket[0].paymentForm}`, 20, yPosition);
+    yPosition = yPosition + 18;
+
+    /* Card Number => Card Payment */
+    if (dataTicket[0].paymentForm !== "Efectivo") {
       doc
         .moveDown()
         .fontSize(10)
-        .text(`Método de Pago: ${dataTicket[0].paymentForm}`, 20, 250);
-      //
-      doc.moveDown().fontSize(10).text(`Pagado: $${cantidad}`, 20, 265);
-      //
-      doc
-        .moveDown()
-        .fontSize(10)
-        .text(`Cambio: $${cantidad - dataTicket[0].total_sale}`, 20, 280);
-      /* Card Payment */
-    } else {
-      // Metodo de Pago
-      doc.moveDown().fontSize(10).text(`Método de Pago: ${dataTicket[0].paymentForm}`, 20, 300);
-      // Metodo de Pago
-      doc
-        .moveDown()
-        .fontSize(10)
-        .text(`Número de Tarjeta: **** **** **** $${numcar}`, 20, 330);
-      // autorizacion
-      doc
-        .moveDown()
-        .fontSize(10)
-        .text(`Autorización: $${autorizacion}`, 20, 350);
+        .text(`Número de Tarjeta: ${cardNumber}`, 20, yPosition);
+      yPosition = yPosition + 18;
     }
 
-    // Thanks
-    doc.moveDown().fontSize(8).text(`¡Gracias por su compra!`, 20, 380);
-
-    // footer
-    doc.moveDown().fontSize(8).text(`Tienda XYZ`, 20, 400);
-    // footer
+    /* Footer */
+    let positionY = doc.y;
+    addCenteredText(doc, "¡GRACIAS POR TU COMPRA!", positionY + 20);
     doc
       .moveDown()
       .fontSize(8)
-      .text(`Calle Falsa #123 Col. Falsa, México DF`, 20, 430);
-    // footer
-    doc.moveDown().fontSize(8).text(`(+52) 7714334090`, 20, 450);
-    // footer
-    doc.moveDown().fontSize(8).text(`www.mitiendita.com.mx`, 20, 470);
+      .text(
+        `Si deseas facturar tu compra, por favor, solicítalo directamente al Gerente en tienda o al Cajero. Recuerda que, de acuerdo con las normativas del SAT México 4.0, tienes un plazo máximo de 30 días después de la compra para realizar tu solicitud de factura. Para poder facturar, asegúrate de tener a la mano tu ticket de compra y proporciona los datos fiscales necesarios. Si tienes alguna duda sobre el proceso, no dudes en preguntar a nuestro personal, quienes estarán encantados de ayudarte. ¡Gracias por tu preferencia!`,
+        20,
+        positionY + 40
+      );
 
-    // Finalizar y cerrar el documento
-    doc.end();
+    doc
+      .moveDown()
+      .fontSize(8)
+      .text(
+        `La Reproducción apocrifa de este comprobante constituye en un delito en los términos de las disposiciones fiscales. Este comprobante tendrá vigencia de 2 años apartir de la Fecha de aprobación la Venta, la cual se remarca en el inicio de este comprobante de venta (Fecha y Hora)"`,
+        20,
+        doc.y + 20
+      );
 
-    // Establecer encabezado para descarga de PDF
+    addCenteredText(doc, "Pago en una sola Exhibición", doc.y + 20);
+
+    try {
+      const url = process.env.URL_SALE + id.toString();
+      await addQrToPdf(doc, url);
+      doc.end();
+    } catch (error) {
+      console.error(error);
+    }
+
+    /* Headers => To Download */
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", "attachment; filename=ticket.pdf");
 
-    // Enviar el PDF generado como respuesta
     doc.pipe(res);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
+/* Function Centered Text Ticket */
+function addCenteredText(doc, text, yPosition) {
+  const pageWidth = doc.page.width;
+  const textWidth = doc.widthOfString(text);
+  const x = (pageWidth - textWidth) / 2;
+
+  doc.fontSize(12).text(text, x, yPosition);
+}
+
+/* Format Card Number Ticket */
+function formarCardNumber(number) {
+  const numberStr = number.toString();
+  const lastFourDigits = numberStr.slice(-4);
+  const maskedPart = "*".repeat(numberStr.length - 4);
+  const formattedNumber = maskedPart + lastFourDigits;
+
+  return formattedNumber.replace(/(\d{4})(?=\d)/g, "$1-").replace(/-$/, "");
+}
+
+/* Format Day and Hour Ticket */
+function formatDateAndHour(dateString) {
+  const date = new Date(dateString);
+
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const year = date.getUTCFullYear();
+
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(date.getUTCSeconds()).padStart(2, "0");
+
+  const formattedDate = `${day}-${month}-${year}`;
+  const formattedTime = `${hours}:${minutes}:${seconds}`;
+
+  return { formattedDate, formattedTime };
+}
+
+/* Function Add QR Ticket */
+async function addQrToPdf(doc, id) {
+  return new Promise((resolve, reject) => {
+    QRCode.toDataURL(id, { errorCorrectionLevel: "H" }, (err, url) => {
+      if (err) return reject(err);
+
+      const base64Data = url.split(",")[1];
+      const buffer = Buffer.from(base64Data, "base64");
+
+      // Agregar imagen QR al PDF
+      doc.image(buffer, { width: 100, align: "center", valign: "center" });
+      resolve();
+    });
+  });
+}
 
 module.exports = {
   registerSalesProducts,
