@@ -27,7 +27,10 @@ const registerSales = async (req, res) => {
     if (registerSalesService > 0) {
       res
         .status(200)
-        .json({ message: "Venta Registrada con Éxito y Stock Actualizado", idSale: registerSalesService  });
+        .json({
+          message: "Venta Registrada con Éxito y Stock Actualizado",
+          idSale: registerSalesService,
+        });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -40,12 +43,10 @@ const filterSales = async (req, res) => {
     delete data.employeeId;
     const salesData = await salesService.getSale(data);
     if (salesData.length > 0) {
-      res
-        .status(401)
-        .json({
-          message: `Se encontraron ${salesData.length} registros`,
-          sales: salesData,
-        });
+      res.status(200).json({
+        message: `Se encontraron ${salesData.length} registros`,
+        sales: salesData,
+      });
     } else {
       res.status(401).json({ message: `No se encontraron registros` });
     }
@@ -60,6 +61,24 @@ const getAllSales = async (req, res) => {
   try {
     const sales = await salesService.getAllSales();
     res.json(sales);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getSaleInfoCompleteById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!id) {
+      return res.status(400).json({ message: "El Id de la Venta es Requerido." });
+    }
+
+    const saleInfo = await salesService.getSaleInfoCompleteById(id);
+    if (!saleInfo) {
+      return res.status(404).json({ message: "La Venta No Existe" });
+    }
+
+    res.json(saleInfo);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -106,7 +125,7 @@ const putSale = async (req, res) => {
 };
 
 const deleteSale = async (req, res) => {
-const data = req.params.id;
+  const data = req.params.id;
 
   try {
     const deleteSaleServices = await salesService.deleteSale(data);
@@ -122,12 +141,10 @@ const postSaleDate = async (req, res) => {
     delete data.employeeId;
     const postSaleDate = await salesService.postSaleDate(data);
     if (postSaleDate.length > 0) {
-      res
-        .status(200)
-        .json({
-          message: `Se encontraron ${postSaleDate.length} registros`,
-          sales: postSaleDate,
-        });
+      res.status(200).json({
+        message: `Se encontraron ${postSaleDate.length} registros`,
+        sales: postSaleDate,
+      });
     } else {
       res.status(200).json({ message: `No se encontraron registros` });
     }
@@ -145,4 +162,5 @@ module.exports = {
   putSale,
   deleteSale,
   postSaleDate,
+  getSaleInfoCompleteById
 };

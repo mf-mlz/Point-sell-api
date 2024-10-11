@@ -8,13 +8,18 @@ const { processPayment } = require('../../../services/openpay');
 
 
 router.get('/', verifyToken, salesController.getAllSales);
+router.get('/getSaleById/:id', verifyToken, validateID, salesController.getSaleInfoCompleteById);
 
 router.post('/register', verifyToken, validateSale, verifyRolSaleRegister, salesController.registerSales);
 router.post('/registerPayment', verifyToken, validateSale, verifyRolSaleRegister, salesController.registerSales);
 router.post('/filter', verifyToken, validateSaleFilter, salesController.filterSales);
 router.post('/postSaleDate', verifyToken, validateSaleFilter, salesController.postSaleDate);
-router.put('/edit', verifyToken, validateID, validateSale, verifyRootUser, salesController.putSale);
-router.delete('/delete/:id', verifyToken, validateID, verifyRootUser, salesController.deleteSale);
 router.post('/payment', verifyToken, verifyRolSaleRegister, processPayment);
+
+
+router.put('/edit', verifyToken, validateID, validateSale, verifyRootUser, salesController.putSale);
+
+router.delete('/delete/:id', verifyToken, validateID, verifyRootUser, salesController.deleteSale);
+
 
 module.exports = router;

@@ -12,6 +12,10 @@ const getAllSales = () => {
     return salesRepository.getAllSales();
 };
 
+const getSaleInfoCompleteById = (id) => {
+    return salesRepository.getSaleInfoCompleteById(id);
+};
+
 const putSale = (sale) => {
     return salesRepository.putSale(sale);
 };
@@ -29,5 +33,6 @@ module.exports = {
     getSale,
     putSale,
     deleteSale,
-    postSaleDate
+    postSaleDate,
+    getSaleInfoCompleteById
 };

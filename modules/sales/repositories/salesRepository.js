@@ -120,6 +120,16 @@ const getAllSales = () => {
   });
 };
 
+const getSaleInfoCompleteById = (id) => {
+  return new Promise((resolve, reject) => {
+    connection.query("CALL GetInfoSalesCompleteById(?)", [id], (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0]);
+    });
+  });
+};
+
+
 const getSale = (data) => {
   return new Promise((resolve, reject) => {
     let keys = "";
@@ -211,4 +221,5 @@ module.exports = {
   putSale,
   deleteSale,
   postSaleDate,
+  getSaleInfoCompleteById
 };
