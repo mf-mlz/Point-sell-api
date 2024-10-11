@@ -6,7 +6,6 @@ const {
 const registerSales = async (sale) => {
   try {
     const products = sale.products;
-    let totalAmount = 0;
     const arryProducts = [];
     /* Verify Stock Products */
     for (const product of products) {
@@ -26,9 +25,6 @@ const registerSales = async (sale) => {
         );
       }
 
-      /* Sum TotalAmount by quantity products * price products */
-      totalAmount += parseFloat(arrayP.price) * parseInt(product.quantity);
-
       /* Create Obj Products */
       const objProduct = {
         productId: product.id,
@@ -40,6 +36,10 @@ const registerSales = async (sale) => {
     }
 
     /* Insert Sale in sales Table */
+    const totalAmount = arryProducts.reduce((accumulator, item) => {
+      return accumulator + item.quantity * item.total;
+    }, 0);
+    
     const resultInsertSale = await insertSale(sale, totalAmount, arryProducts);
     return resultInsertSale;
   } catch (error) {
@@ -122,13 +122,16 @@ const getAllSales = () => {
 
 const getSaleInfoCompleteById = (id) => {
   return new Promise((resolve, reject) => {
-    connection.query("CALL GetInfoSalesCompleteById(?)", [id], (error, results) => {
-      if (error) return reject(error);
-      resolve(results[0]);
-    });
+    connection.query(
+      "CALL GetInfoSalesCompleteById(?)",
+      [id],
+      (error, results) => {
+        if (error) return reject(error);
+        resolve(results[0]);
+      }
+    );
   });
 };
-
 
 const getSale = (data) => {
   return new Promise((resolve, reject) => {
@@ -221,5 +224,5 @@ module.exports = {
   putSale,
   deleteSale,
   postSaleDate,
-  getSaleInfoCompleteById
+  getSaleInfoCompleteById,
 };
