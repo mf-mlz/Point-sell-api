@@ -35,8 +35,8 @@ const getEmployee = (data) => {
     let values = [];
 
     Object.entries(data).forEach(([key, value]) => {
-      values.push(value);
-      keys += "employees." + key + " = ? OR ";
+      values.push("%"+ value +  "%");
+      keys += "employees." + key + " like ? OR ";
     });
 
     keys = keys.trim();
@@ -49,7 +49,7 @@ const getEmployee = (data) => {
       "SELECT employees.*, roles.name as role_name FROM employees INNER JOIN roles ON employees.role_id = roles.id  WHERE " +
       keys +
       "";
-
+    
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
       const result = JSON.parse(JSON.stringify(results));

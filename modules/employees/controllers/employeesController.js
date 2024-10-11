@@ -44,7 +44,7 @@ const registerEmployees = async (req, res) => {
   }
 };
 
-const filterEmployees = async (req, res) => {
+const getEmployee = async (req, res) => {
   const data = req.body;
   try {
     delete data.employeeId;
@@ -276,7 +276,7 @@ module.exports = {
   getAllEmployees,
   registerEmployees,
   login,
-  filterEmployees,
+  getEmployee,
   filterEmployeesAll,
   putEmployees,
   deleteEmployee,
