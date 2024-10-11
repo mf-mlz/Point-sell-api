@@ -3,6 +3,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
+const permissionsRoutes = require('./modules/permissions/routes/permissionsRoutes');
 const clientsRoutes = require('./modules/clients/routes/clientRoutes');
 const employeesRoutes = require('./modules/employees/routes/employeesRoutes');
 const productsRoutes = require('./modules/products/routes/productsRoutes');
@@ -52,6 +53,7 @@ app.use('/api/sales', salesRoutes);
 app.use('/api/salesproducts', salesProductsRoutes);
 app.use('/api/invoices', invoicesRoutes);
 app.use('/api/paymentsform', paymentsFormRoutes);
+app.use('/api/permissions', permissionsRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
