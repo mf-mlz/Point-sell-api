@@ -15,9 +15,9 @@ const registerEmployees = (employee) => {
 
 const getAllEmployees = () => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM employees WHERE status = "Active"', (error, results) => {
+        connection.query('CALL getAllEmployees();', (error, results) => {
             if (error) return reject(error);
-            resolve(results);
+            resolve(results[0]);
         });
     });
 };
