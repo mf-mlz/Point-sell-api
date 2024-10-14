@@ -11,6 +11,10 @@ const getEmployee = (data) => {
     return employeesRepository.getEmployee(data);
 };
 
+const getEmployeeEmail = (data) => {
+    return employeesRepository.getEmployeeEmail(data);
+};
+
 const getEmployeeAll = (data) => {
     return employeesRepository.getEmployeeAll(data);
 };
@@ -31,6 +35,7 @@ module.exports = {
     registerEmployees,
     getAllEmployees,
     getEmployee,
+    getEmployeeEmail,
     getEmployeeAll,
     putEmployees,
     deleteEmployee,

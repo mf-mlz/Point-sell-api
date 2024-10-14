@@ -15,9 +15,9 @@ const registerEmployees = (employee) => {
 
 const getAllEmployees = () => {
     return new Promise((resolve, reject) => {
-        connection.query('CALL getAllEmployees();', (error, results) => {
+        connection.query('SELECT * FROM employees WHERE status = "Active"', (error, results) => {
             if (error) return reject(error);
-            resolve(results[0]);
+            resolve(results);
         });
     });
 };
@@ -109,9 +109,8 @@ const deleteEmployee = (id) => {
 
 const putEmployeesPs = (employee) => {
     return new Promise((resolve, reject) => {
-        console.log(employee);
-        const query = 'UPDATE employees SET password= ? WHERE id= ?';
-        const values = [employee.password, employee.id];
+        const query = 'UPDATE employees SET password = ?, updated_at = ? WHERE id= ?';
+        const values = [employee.password, employee.updated_at, employee.id];
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
             resolve('Usuario Modificado Correctamente');
@@ -124,6 +123,7 @@ module.exports = {
     getAllEmployees,
     registerEmployees,
     getEmployee,
+    getEmployeeEmail,
     getEmployeeAll,
     putEmployees,
     deleteEmployee,
