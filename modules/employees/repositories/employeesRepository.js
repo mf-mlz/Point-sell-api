@@ -51,6 +51,21 @@ const getEmployee = (data) => {
     });
 };
 
+const getEmployeeEmail = (data) => {
+    return new Promise((resolve, reject) => {
+
+        const query = 'SELECT e.id, e.email FROM `employees` as e where e.email = ? and status = "Active";';
+        const values = [data.email];
+
+        connection.query(query, values, (error, results) => {
+            if (error) return reject(error);
+            const result = JSON.parse(JSON.stringify(results));
+            resolve(result);
+        });
+
+    });
+};
+
 const getEmployeeAll = (data) => {
     return new Promise((resolve, reject) => {
         const aux = '%' + data.search + '%';
