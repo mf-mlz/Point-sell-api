@@ -10,7 +10,7 @@ router.get('/', verifyToken, employeesController.getAllEmployees);
 router.post('/register', verifyToken, verifyRootUser, validateEmployee, employeesController.registerEmployees);
 router.post('/logout', employeesController.logout);
 router.post('/login', employeesController.login);
-router.post('/filter', verifyToken, validateEmployeeFilter, employeesController.filterEmployees);
+router.post('/filter', verifyToken, validateEmployeeFilter, employeesController.getEmployee);
 router.post('/filterAll', verifyToken, validateEmployeeFilterAll, employeesController.filterEmployeesAll);
 
 router.put('/edit', verifyToken, verifyRootUser, validateID, validateEmployee, employeesController.putEmployees);
