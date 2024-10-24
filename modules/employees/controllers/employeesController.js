@@ -1,6 +1,7 @@
 const employeesService = require("../services/employeesService");
 const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
+const permissionsController = require('../../permissions/controllers/permissionsController');
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
@@ -8,7 +9,7 @@ const path = require("path");
 const { encryptCrypt } = require("../../../utils/crypto-js");
 
 /* Key ECDSA (ES256) */
-const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), 'utf8');
+const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
 
 dotenv.config();
 const registerEmployees = async (req, res) => {
@@ -50,12 +51,10 @@ const getEmployee = async (req, res) => {
     delete data.employeeId;
     const employeeData = await employeesService.getEmployee(data);
     if (employeeData.length > 0) {
-      res
-        .status(200)
-        .json({
-          message: `Se encontraron ${employeeData.length} registros`,
-          employee: employeeData,
-        });
+      res.status(200).json({
+        message: `Se encontraron ${employeeData.length} registros`,
+        employee: employeeData,
+      });
     } else {
       res.status(200).json({ message: `No se encontraron registros` });
     }
@@ -70,12 +69,10 @@ const filterEmployeesAll = async (req, res) => {
   try {
     const employeeData = await employeesService.getEmployeeAll(data);
     if (employeeData.length > 0) {
-      res
-        .status(200)
-        .json({
-          message: `Se encontraron ${employeeData.length} registros`,
-          employee: employeeData,
-        });
+      res.status(200).json({
+        message: `Se encontraron ${employeeData.length} registros`,
+        employee: employeeData,
+      });
     } else {
       res.status(200).json({ message: `No se encontraron registros` });
     }
@@ -108,41 +105,45 @@ const login = async (req, res) => {
         password,
         employeeData[0].password
       );
+
       if (verifyPassword) {
+        
         const payload = {
           id: employeeData[0].id,
           name: employeeData[0].name,
           role_name: employeeData[0].role_name,
         };
 
-       const payloadEncrypt = encryptCrypt(JSON.stringify(payload));
-       
+        const payloadEncrypt = encryptCrypt(JSON.stringify(payload));
+
         const options = {
           algorithm: "ES256",
           expiresIn: "7d",
         };
 
-        const token = jwt.sign({
-          data: payloadEncrypt
-        }, pKey, options);
+        const token = jwt.sign(
+          {
+            data: payloadEncrypt,
+          },
+          pKey,
+          options
+        );
 
         res.cookie("token", token, {
-          httpOnly: true, 
-          secure: false, /* Production => true */ 
-          sameSite: 'Lax',
+          httpOnly: true,
+          secure: false /* Production => true */,
+          sameSite: "Lax",
           maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "strict", 
+          sameSite: "strict",
         });
 
         res
           .status(200)
-          .json({ message: `Inicio de sesión exitoso`, data: payloadEncrypt});
+          .json({ message: `Inicio de sesión exitoso`, data: payloadEncrypt });
       } else {
-        res
-          .status(401)
-          .json({
-            message: ` La contraseña del correo ${email} es incorrecta.`,
-          });
+        res.status(401).json({
+          message: ` La contraseña del correo ${email} es incorrecta.`,
+        });
       }
     } else {
       res.status(404).json({ message: `El correo ${email} no existe` });
@@ -195,80 +196,80 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-const logout = async (req, res)=>{
-  res.clearCookie('token');
-  res.json({ message: 'Sesión Finalizada' });
-}
-
-
+const logout = async (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Sesión Finalizada" });
+};
 
 const recoverPassword = async (req, res) => {
-
   const data = req.body;
 
   const employeeData = await employeesService.getEmployee(data);
   if (!employeeData.length > 0) {
-      res.status(200).json({ message: `Usurio no encontrado` });
+    res.status(200).json({ message: `Usurio no encontrado` });
   }
   const paylod = {
-      email: employeeData[0].email
-  }
+    email: employeeData[0].email,
+  };
   const options = {
-      algorithm: 'HS256',
-      expiresIn: '1h'
+    algorithm: "HS256",
+    expiresIn: "1h",
   };
   const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
   const url = `${process.env.URL_NODE}${tokenRecover}`;
 
   const info = await transporter.sendMail({
-      from: '"Sistemas Point Sell"', // sender address
-      to: paylod.email, // list of receivers
-      subject: "Recuperación de contraseña 🪪", // Subject line
-      text: "", // plain text body
-      html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`, // html body
+    from: '"Sistemas Point Sell"', // sender address
+    to: paylod.email, // list of receivers
+    subject: "Recuperación de contraseña 🪪", // Subject line
+    text: "", // plain text body
+    html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`, // html body
   });
   console.log("Message sent: %s", info.messageId);
-  return res.status(200).json({ data: 'Correo de recuperación enviado a ' + paylod.email });
+  return res
+    .status(200)
+    .json({ data: "Correo de recuperación enviado a " + paylod.email });
 };
 
 const verificationToReset = async (req, res) => {
-
   const { token, password } = req.body;
   if (!token) {
-      return res.status(400).send('Token es requerido');
+    return res.status(400).send("Token es requerido");
   }
 
   let decoded;
   try {
-      decoded = jwt.verify(token, process.env.SECRET_NODE);
+    decoded = jwt.verify(token, process.env.SECRET_NODE);
   } catch (error) {
-      return res.status(400).send('Token inválido o expirado');
+    return res.status(400).send("Token inválido o expirado");
   }
 
   let employeeData;
   try {
-      const d = { email: decoded.email };
-      employeeData = await employeesService.getEmployee(d);
-      if (!employeeData.length) {
-          return res.status(404).json({ message: 'Usuario no encontrado' });
-      }
+    const d = { email: decoded.email };
+    employeeData = await employeesService.getEmployee(d);
+    if (!employeeData.length) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
   } catch (error) {
-      return res.status(400).send('Error al obtener Usuarios');
+    return res.status(400).send("Error al obtener Usuarios");
   }
 
   try {
-      const hashedPassword = await passwordService.hashPassword(password);
-      employeeData[0].password = hashedPassword;
+    const hashedPassword = await passwordService.hashPassword(password);
+    employeeData[0].password = hashedPassword;
   } catch (error) {
-      return res.status(400).send('Hash no generado');
+    return res.status(400).send("Hash no generado");
   }
 
   try {
-      employeeData[0].updated_at = createUpdatetAt();
-      const updateEmployeesServices = await employeesService.putEmployeesPs(employeeData[0]); // Asegúrate de pasar `employeeData`
-      return res.status(200).json({ message: updateEmployeesServices });
+    employeeData[0].updated_at = createUpdatetAt();
+    const updateEmployeesServices = await employeesService.putEmployeesPs(
+      employeeData[0]
+    );
+    return res.status(200).json({ message: updateEmployeesServices });
   } catch (error) {
-      return res.status(400).send('Contraseña no actualizada');
+    return res.status(400).send("Contraseña no actualizada");
   }
 };
 
@@ -282,5 +283,5 @@ module.exports = {
   deleteEmployee,
   logout,
   recoverPassword,
-  verificationToReset
+  verificationToReset,
 };

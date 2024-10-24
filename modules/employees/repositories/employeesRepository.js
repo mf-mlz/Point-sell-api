@@ -7,7 +7,7 @@ const registerEmployees = (employee) => {
     const values = [
       employee.name,
       employee.email,
-      employee.password,
+      process.env.PASS_TEMP+employee.password,
       employee.phone,
       employee.address,
       employee.role_id,
@@ -15,7 +15,7 @@ const registerEmployees = (employee) => {
 
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
-      resolve("Usuario Registrado Correctamente");
+      resolve("Empleado Registrado Correctamente:");
     });
   });
 };
@@ -105,7 +105,6 @@ const deleteEmployee = (id) => {
 
 const putEmployeesPs = (employee) => {
   return new Promise((resolve, reject) => {
-    console.log(employee);
     const query = "UPDATE employees SET password= ? WHERE id= ?";
     const values = [employee.password, employee.id];
     connection.query(query, values, (error, results) => {
