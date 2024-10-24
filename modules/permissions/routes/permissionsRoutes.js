@@ -6,6 +6,8 @@ const { verifyRootUser } = require('../../../middlewares/adminMiddleware');
 const { validateID, validatePermissions, validatePermissionsFilter } = require('../../../middlewares/validatorsPermissions');
 
 router.get('/', verifyToken, verifyRootUser, permissionsController.getAllPermissions);
+router.get('/getPermissionsByRole', verifyToken, permissionsController.getPermissionsByRoleAndModule);
+router.get('/getModuleAccessByRole', verifyToken, permissionsController.getModuleAccessByRole);
 
 router.post('/register', verifyToken, verifyRootUser, validatePermissions, permissionsController.registerPermissions);
 router.post('/filter', verifyToken, verifyRootUser, validateID, validatePermissionsFilter, permissionsController.filterPermissions);

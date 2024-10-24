@@ -1,4 +1,5 @@
 const connection = require("../../../config/database");
+const { decryptCrypt } = require("../../../utils/crypto-js");
 
 const registerPermissions = (permission) => {
   return new Promise((resolve, reject) => {
@@ -51,8 +52,7 @@ const deletePermissions = (id, updated_at) => {
 
 const getAllPermissions = () => {
   return new Promise((resolve, reject) => {
-    const query =
-      "CALL GetRolesPermissions()";
+    const query = "CALL GetRolesPermissions()";
     connection.query(query, (error, results) => {
       if (error) return reject("Ocurrió un error al Obtener los Permisos");
       resolve(results[0]);
@@ -66,7 +66,7 @@ const filterPermissions = (data) => {
     let values = [];
 
     Object.entries(data).forEach(([key, value]) => {
-      values.push("%"+ value +  "%");
+      values.push("%" + value + "%");
       keys += "roles_permissions." + key + " like ? OR ";
     });
 
@@ -77,8 +77,10 @@ const filterPermissions = (data) => {
     }
 
     const query =
-      "SELECT roles_permissions.id, roles_permissions.role_id, roles_permissions.module, roles_permissions.permissions, roles.name as role_name FROM roles_permissions INNER JOIN roles ON roles_permissions.role_id = roles.id  WHERE " + keys + "";
-    
+      "SELECT roles_permissions.id, roles_permissions.role_id, roles_permissions.module, roles_permissions.permissions, roles.name as name_rol FROM roles_permissions INNER JOIN roles ON roles_permissions.role_id = roles.id  WHERE " +
+      keys +
+      "";
+
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
       const result = JSON.parse(JSON.stringify(results));
@@ -87,10 +89,75 @@ const filterPermissions = (data) => {
   });
 };
 
+/* Get Permissions By Role/Module Session */
+const getPermissionsByRoleAndModule = async (userSessionEncrypt) => {
+  let data = decryptCrypt(userSessionEncrypt);
+  const response = await GetPermissionsByRoleAndModuleExecute(data);
+  if (!response) {
+    return false;
+  } else {
+    /* Obj Permissions */
+    const permissions = process.env.PERMISSIONS.split(",");
+    const arrayResponse = response.split(",");
+
+    const filteredPermissionsObject = permissions.reduce((acc, current) => {
+      acc[current] = arrayResponse.includes(current) ? true : false;
+      return acc;
+    }, {});
+
+    return filteredPermissionsObject;
+  }
+};
+
+/* Call GetPermissionsByRoleAndModule() */
+const GetPermissionsByRoleAndModuleExecute = (data) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "CALL GetPermissionsByRoleAndModule(?, ?)",
+      [data.role, data.module],
+      (error, results) => {
+        if (error) return reject(false);
+        if (results[0].length > 0) {
+          resolve(results[0][0].permissions);
+        } else {
+          resolve(false);
+        }
+      }
+    );
+  });
+};
+
+/* Get Modules by Id Role */
+const getModuleAccessByRole = async (sessionEmployee) => {
+  let data = decryptCrypt(sessionEmployee);
+  const response = await getModuleAccessByRoleExecute(data);
+  return response;
+};
+
+/* Call GetModuleAccessByIdRole() */
+const getModuleAccessByRoleExecute = (data) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "CALL GetModuleAccessByRole(?)",
+      [data.role_name],
+      (error, results) => {
+        if (error) return reject(false);
+        if (results[0].length > 0) {
+          resolve(results[0]);
+        } else {
+          resolve(false);
+        }
+      }
+    );
+  });
+};
+
 module.exports = {
   registerPermissions,
   editPermissions,
   deletePermissions,
   getAllPermissions,
-  filterPermissions
+  filterPermissions,
+  getPermissionsByRoleAndModule,
+  getModuleAccessByRole,
 };

@@ -14,7 +14,6 @@ const filterPaymentsForm = async (req, res) => {
 
     const data = req.body;
     try {
-        console.log(data);
         delete data.employeeId;
         const paymentsFormData = await paymentsFormService.getPaymentsForm(data);
 
