@@ -232,43 +232,57 @@ const recoverPassword = async (req, res) => {
 
 const verificationToReset = async (req, res) => {
   const { token, password } = req.body;
-  if (!token) {
-    return res.status(400).send("Token es requerido");
+  if (!token || !password) {
+    return res.status(400).json({ message: "Token y Password son requeridos" });
   }
-
-  let decoded;
   try {
-    decoded = jwt.verify(token, process.env.SECRET_NODE);
+    let tokenDecrypt = decryptCrypt(token);
+    jwt.verify(
+      tokenDecrypt,
+      process.env.SECRET_NODE,
+      { algorithms: ["HS256"] },
+      (err, decoded) => {
+        if (!validateEmailAndId(decoded)) {
+          return res
+            .status(201)
+            .json({ message: "Los datos del usuario no coinciden" });
+        } else {
+          if (!EditPs(decoded.id, password)) {
+            return res.status(500).json({
+              message: "Ocurrio un error al editar la contraseña del usuario",
+            });
+          } else {
+            return res
+              .status(200)
+              .json({ message: "Contraseña actualizada correctamente" });
+          }
+        }
+      }
+    );
   } catch (error) {
     return res.status(400).send("Token inválido o expirado");
   }
+};
 
-  let employeeData;
-  try {
-    const d = { email: decoded.email };
-    employeeData = await employeesService.getEmployee(d);
-    if (!employeeData.length) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
-    }
-  } catch (error) {
-    return res.status(400).send("Error al obtener Usuarios");
-  }
+const validateEmailAndId = async (decode) => {
+  const employeeData = await employeesService.getEmployeeEmail(decode.id);
+  return decode.email === employeeData.email && decode.id === employeeData.id;
+};
 
+const EditPs = async (id, password) => {
   try {
     const hashedPassword = await passwordService.hashPassword(password);
-    employeeData[0].password = hashedPassword;
-  } catch (error) {
-    return res.status(400).send("Hash no generado");
-  }
-
-  try {
-    employeeData[0].updated_at = createUpdatetAt();
+    const objEmp = {
+      password: hashedPassword,
+      updated_at: createUpdatetAt(),
+      id: id,
+    };
     const updateEmployeesServices = await employeesService.putEmployeesPs(
-      employeeData[0]
+      objEmp
     );
-    return res.status(200).json({ message: updateEmployeesServices });
+    return updateEmployeesServices;
   } catch (error) {
-    return res.status(400).send("Contraseña no actualizada");
+    return false;
   }
 };
 
