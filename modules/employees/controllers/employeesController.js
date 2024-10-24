@@ -203,11 +203,12 @@ const logout = async (req, res) => {
 const recoverPassword = async (req, res) => {
   const data = req.body;
 
-  const employeeData = await employeesService.getEmployee(data);
+  const employeeData = await employeesService.getEmployeeEmail(data);
   if (!employeeData.length > 0) {
     res.status(200).json({ message: `Usurio no encontrado` });
   }
   const paylod = {
+    id: employeeData[0].id,
     email: employeeData[0].email,
   };
   const options = {
@@ -215,16 +216,20 @@ const recoverPassword = async (req, res) => {
     expiresIn: "1h",
   };
   const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
-  const url = `${process.env.URL_NODE}${tokenRecover}`;
+
+  const tokenloadEncrypt = encryptCrypt(tokenRecover);
+  console.log(tokenloadEncrypt);
+
+  const url = `${process.env.URL_NODE}${encodeURIComponent(tokenloadEncrypt)}`;
 
   const info = await transporter.sendMail({
-    from: '"Sistemas Point Sell"', // sender address
-    to: paylod.email, // list of receivers
-    subject: "Recuperación de contraseña 🪪", // Subject line
-    text: "", // plain text body
-    html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`, // html body
+    from: '"Sistemas Point Sell"',
+    to: paylod.email,
+    subject: "Recuperación de contraseña 🪪",
+    text: "",
+    html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`,
   });
-  console.log("Message sent: %s", info.messageId);
+  // console.log("Message sent: %s", info.messageId);
   return res
     .status(200)
     .json({ data: "Correo de recuperación enviado a " + paylod.email });
@@ -248,9 +253,11 @@ const verificationToReset = async (req, res) => {
             .json({ message: "Los datos del usuario no coinciden" });
         } else {
           if (!EditPs(decoded.id, password)) {
-            return res.status(500).json({
-              message: "Ocurrio un error al editar la contraseña del usuario",
-            });
+            return res
+              .status(500)
+              .json({
+                message: "Ocurrio un error al editar la contraseña del usuario",
+              });
           } else {
             return res
               .status(200)
