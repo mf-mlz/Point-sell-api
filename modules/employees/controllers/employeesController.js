@@ -1,7 +1,7 @@
 const employeesService = require("../services/employeesService");
 const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
-const permissionsController = require('../../permissions/controllers/permissionsController');
+const permissionsController = require("../../permissions/controllers/permissionsController");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
@@ -107,7 +107,6 @@ const login = async (req, res) => {
       );
 
       if (verifyPassword) {
-        
         const payload = {
           id: employeeData[0].id,
           name: employeeData[0].name,

@@ -18,6 +18,6 @@ router.put('/edit', verifyToken, verifyRootUser, validateID, validateEmployee, e
 router.delete('/delete/:id', verifyToken, verifyRootUser, validateID, employeesController.deleteEmployee);
 
 router.post('/recover', employeesController.recoverPassword);
-router.post('/verification', verifyToken, employeesController.verificationToReset);
+router.put('/verification', employeesController.verificationToReset);
 
 module.exports = router;

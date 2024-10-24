@@ -35,7 +35,7 @@ const getEmployee = (data) => {
     let values = [];
 
     Object.entries(data).forEach(([key, value]) => {
-      values.push("%"+ value +  "%");
+      values.push("%" + value + "%");
       keys += "employees." + key + " like ? OR ";
     });
 
@@ -49,12 +49,27 @@ const getEmployee = (data) => {
       "SELECT employees.*, roles.name as role_name FROM employees INNER JOIN roles ON employees.role_id = roles.id  WHERE " +
       keys +
       "";
-    
+
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
       const result = JSON.parse(JSON.stringify(results));
       resolve(result);
     });
+  });
+};
+
+const getEmployeeEmail = (data) => {
+  return new Promise((resolve, reject) => {
+
+    const query = 'SELECT e.id, e.email FROM `employees` as e where e.email = ? and status = "Active";';
+    const values = [data.email];
+
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      const result = JSON.parse(JSON.stringify(results));
+      resolve(result);
+    });
+
   });
 };
 
@@ -118,8 +133,9 @@ module.exports = {
   getAllEmployees,
   registerEmployees,
   getEmployee,
+  getEmployeeEmail,
   getEmployeeAll,
   putEmployees,
   deleteEmployee,
-  putEmployeesPs,
+  putEmployeesPs
 };
