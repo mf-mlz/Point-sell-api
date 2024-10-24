@@ -67,7 +67,6 @@ const createInvoice = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Ocurrió un error al crear la Factura" });
   }
 };
@@ -138,7 +137,6 @@ const sendEmail = async (req, res) => {
       res.status(500).send({ error: "Error al enviar el correo" });
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({ error: "Ocurrió un error al enviar la Factura" });
   }
 };
