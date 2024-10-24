@@ -33,7 +33,7 @@ const app = express();
 app.use(cors({
     origin: 'http://localhost:4200',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'session-employee'],
+    allowedHeaders: ['Content-Type', 'session-employee', 'module-role'],
     credentials: true
 }));
 
