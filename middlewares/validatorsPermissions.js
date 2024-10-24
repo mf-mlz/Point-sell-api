@@ -30,6 +30,7 @@ const validatePermissions = [
         .isLength({ min: 1 })
         .isString(),
     body('permissions')
+        .if((value) => value !== undefined && value !== '')
         .trim()
         .isLength({ min: 1 })
         .isString(),
