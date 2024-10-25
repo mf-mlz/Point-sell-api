@@ -23,7 +23,7 @@ const registerPermissions = async (req, res) => {
       await permissionsService.registerPermissions(data);
     res.status(200).json({ message: registerPermissionsServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Registrar el Permiso" });
+    res.status(500).json({ error: err });
   }
 };
 
@@ -59,10 +59,9 @@ const editPermissions = async (req, res) => {
         }
       }
     }
-
     res.status(200).json({ message: editPermissionsServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Editar el Permiso" });
+    res.status(500).json({ error: err });
   }
 };
 

@@ -12,8 +12,12 @@ const registerPermissions = (permission) => {
     ];
 
     connection.query(query, values, (error, results) => {
-      if (error) return reject("Ocurrió un error al Registrar el Permiso");
-      resolve("Permiso Registrado Correctamente");
+      if (error) {
+        const errorMessage = error.sqlMessage.includes("Duplicate") ? "El Permiso ya se encuentra registrado" : "Ocurrió un error al Registrar el Permiso";
+        return reject(errorMessage);
+      } else {
+        resolve("Permiso Registrado Correctamente");
+      }
     });
   });
 };
@@ -31,15 +35,20 @@ const editPermissions = (permission) => {
     ];
 
     connection.query(query, values, (error, results) => {
-      if (error) return reject("Ocurrió un error al Editar el Permiso");
-      resolve("Permiso Editado Correctamente");
-    });
+      if (error) {
+        const errorMessage = error.sqlMessage.includes("Duplicate") ? "El Permiso ya se encuentra registrado" : "Ocurrió un error al Modificar el Permiso";
+        return reject(errorMessage);
+      } else {
+        resolve("Permiso Modificado Correctamente");
+      }    });
   });
 };
 
 const editPermissionsAccess = (name, access) => {
   return new Promise((resolve, reject) => {
-    const permissions = access ?  "SET permissions = CONCAT_WS(',', permissions, 'access')" : "SET permissions = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', permissions), ',access', ','))";
+    const permissions = access
+      ? "SET permissions = CONCAT_WS(',', permissions, 'access')"
+      : "SET permissions = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', permissions), ',access', ','))";
     const conditionTrue = access ? "AND permissions NOT LIKE '%access%';" : ";";
     const query = `UPDATE roles_permissions ${permissions}  WHERE module = ? ${conditionTrue}`;
     const values = [name];
