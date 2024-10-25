@@ -7,11 +7,23 @@ const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
 const { encryptCrypt } = require("../../../utils/crypto-js");
+const nodemailer = require('nodemailer');
 
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
 
 dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SERVICE_NODE,
+  port: process.env.PORT_NODE,
+  secure: process.env.SECURITY_NODE, // true for port 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_NODE,
+    pass: process.env.PW_NODE,
+  },
+});
+
 const registerEmployees = async (req, res) => {
   const requiredFields = [
     "name",
@@ -218,7 +230,7 @@ const recoverPassword = async (req, res) => {
   const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
 
   const tokenloadEncrypt = encryptCrypt(tokenRecover);
-  
+
   const url = `${process.env.URL_NODE}${encodeURIComponent(tokenloadEncrypt)}`;
 
   const info = await transporter.sendMail({
@@ -228,7 +240,6 @@ const recoverPassword = async (req, res) => {
     text: "",
     html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`,
   });
-  // console.log("Message sent: %s", info.messageId);
   return res
     .status(200)
     .json({ data: "Correo de recuperación enviado a " + paylod.email });
