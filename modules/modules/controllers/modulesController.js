@@ -125,14 +125,50 @@ const getAllModulesAndSubmodules = async (req, res) => {
     }
 
     arrayModules.sort((a, b) => {
-      if (a.name < b.name) return -1; 
-      if (a.name > b.name) return 1; 
-      return 0; 
+      if (a.name < b.name) return -1;
+      if (a.name > b.name) return 1;
+      return 0;
     });
     res.status(200).json({ modulesSubmodules: arrayModules });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
+    res.status(500).json({ error: "Ocurrió un error al Obtener los Modulos" });
   }
+};
+
+const fetchModulesAndSubmodules = async () => {
+  const arrayModules = [];
+  const getAllModulesServices = await modulesService.getAllModules();
+
+  for (const element of getAllModulesServices) {
+    const childrens = await submodulesService.getSubModuleByIdModule(
+      element.id
+    );
+
+    let obj = { name: element.name, type: "Módulo" };
+
+    if (childrens.length > 0) {
+      for (const children of childrens) {
+        let objChild = {
+          name: children.name,
+          type: "SubMódulo",
+          modulo: children.module,
+        };
+        arrayModules.push(objChild);
+      }
+    }
+
+    if (element.name !== "Dashboard") {
+      arrayModules.push(obj);
+    }
+  }
+
+  arrayModules.sort((a, b) => {
+    if (a.name < b.name) return -1;
+    if (a.name > b.name) return 1;
+    return 0;
+  });
+
+  return arrayModules;
 };
 
 const filterPermissions = async (req, res) => {
@@ -219,4 +255,5 @@ module.exports = {
   filterPermissions,
   getPermissionsByRoleAndModule,
   getModuleAccessByRole,
+  fetchModulesAndSubmodules
 };
