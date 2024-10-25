@@ -218,8 +218,7 @@ const recoverPassword = async (req, res) => {
   const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
 
   const tokenloadEncrypt = encryptCrypt(tokenRecover);
-  console.log(tokenloadEncrypt);
-
+  
   const url = `${process.env.URL_NODE}${encodeURIComponent(tokenloadEncrypt)}`;
 
   const info = await transporter.sendMail({
