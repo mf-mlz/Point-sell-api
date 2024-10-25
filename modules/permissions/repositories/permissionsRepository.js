@@ -1,5 +1,5 @@
 const connection = require("../../../config/database");
-const { decryptCrypt } = require("../../../utils/crypto-js");
+const { decryptCrypt, encryptCrypt } = require("../../../utils/crypto-js");
 
 const registerPermissions = (permission) => {
   return new Promise((resolve, reject) => {
@@ -131,7 +131,8 @@ const GetPermissionsByRoleAndModuleExecute = (data) => {
 const getModuleAccessByRole = async (sessionEmployee) => {
   let data = decryptCrypt(sessionEmployee);
   const response = await getModuleAccessByRoleExecute(data);
-  return response;
+  const responseEncrypt = encryptCrypt(JSON.stringify(response));
+  return responseEncrypt;
 };
 
 /* Call GetModuleAccessByIdRole() */
