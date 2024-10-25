@@ -28,9 +28,14 @@ const getModuleAccessByRole = (sessionEmployee) => {
     return permissionsRepository.getModuleAccessByRole(sessionEmployee);
 };
 
+const editPermissionsAccess = (name, access) => {
+    return permissionsRepository.editPermissionsAccess(name, access);
+};
+
 module.exports = {
     registerPermissions,
     editPermissions,
+    editPermissionsAccess,
     deletePermissions,
     getAllPermissions,
     filterPermissions,

@@ -37,6 +37,20 @@ const editPermissions = (permission) => {
   });
 };
 
+const editPermissionsAccess = (name, access) => {
+  return new Promise((resolve, reject) => {
+    const permissions = access ?  "SET permissions = CONCAT_WS(',', permissions, 'access')" : "SET permissions = TRIM(BOTH ',' FROM REPLACE(CONCAT(',', permissions), ',access', ','))";
+    const conditionTrue = access ? "AND permissions NOT LIKE '%access%';" : ";";
+    const query = `UPDATE roles_permissions ${permissions}  WHERE module = ? ${conditionTrue}`;
+    const values = [name];
+
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(false);
+      resolve(true);
+    });
+  });
+};
+
 const deletePermissions = (id, updated_at) => {
   return new Promise((resolve, reject) => {
     const query =
@@ -156,6 +170,7 @@ const getModuleAccessByRoleExecute = (data) => {
 module.exports = {
   registerPermissions,
   editPermissions,
+  editPermissionsAccess,
   deletePermissions,
   getAllPermissions,
   filterPermissions,
