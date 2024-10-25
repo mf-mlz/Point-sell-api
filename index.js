@@ -11,6 +11,8 @@ const rolesRoutes = require('./modules/roles/routes/rolesRoutes');
 const salesRoutes = require('./modules/sales/routes/salesRoutes');
 const salesProductsRoutes = require('./modules/salesProducts/routes/salesProductsRoutes');
 const invoicesRoutes = require('./modules/invoices/routes/invoicesRoutes');
+const modulesRoutes = require('./modules/modules/routes/modulesRoutes');
+const submodulesRoutes = require('./modules/submodules/routes/submodulesRoutes');
 const { requestLogger } = require('./middlewares/logMiddleware');
 const paymentsFormRoutes = require('./modules/paymentsForm/routes/paymentsFormRoutes');
 const cookieParser = require('cookie-parser');
@@ -54,6 +56,8 @@ app.use('/api/salesproducts', salesProductsRoutes);
 app.use('/api/invoices', invoicesRoutes);
 app.use('/api/paymentsform', paymentsFormRoutes);
 app.use('/api/permissions', permissionsRoutes);
+app.use('/api/modules', modulesRoutes);
+app.use('/api/submodules', submodulesRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use((err, req, res, next) => {
