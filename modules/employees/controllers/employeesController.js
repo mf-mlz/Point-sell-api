@@ -6,7 +6,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
-const { encryptCrypt } = require("../../../utils/crypto-js");
+const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
+const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
 
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
@@ -136,9 +137,25 @@ const login = async (req, res) => {
           sameSite: "strict",
         });
 
-        res
-          .status(200)
-          .json({ message: `Inicio de sesión exitoso`, data: payloadEncrypt });
+        /* Code SMS */
+        const code = await generateCodeAuthSms();
+
+        /* Auth SMS */
+        const serviceSms = await sendSms(employeeData[0].phone, code);
+
+        if (serviceSms.status) {
+          const codeEncrypt = encryptCrypt(code);
+
+          res.status(200).json({
+            message: serviceSms.message,
+            data: payloadEncrypt,
+            code: codeEncrypt,
+          });
+        } else {
+          res.status(500).json({
+            error: `La Autenticación por SMS falló: ${serviceSms.error}`,
+          });
+        }
       } else {
         res.status(401).json({
           message: ` La contraseña del correo ${email} es incorrecta.`,
@@ -150,6 +167,12 @@ const login = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+const verifyCode = async (req, res) => {
+  const data = req.body;
+  let codeDecrypt = decryptCrypt(data.codeResend);
+  res.status(200).json({ status: codeDecrypt === data.code });
 };
 
 const getAllEmployees = async (req, res) => {
@@ -218,7 +241,7 @@ const recoverPassword = async (req, res) => {
   const tokenRecover = jwt.sign(paylod, process.env.SECRET_NODE, options);
 
   const tokenloadEncrypt = encryptCrypt(tokenRecover);
-  
+
   const url = `${process.env.URL_NODE}${encodeURIComponent(tokenloadEncrypt)}`;
 
   const info = await transporter.sendMail({
@@ -252,11 +275,9 @@ const verificationToReset = async (req, res) => {
             .json({ message: "Los datos del usuario no coinciden" });
         } else {
           if (!EditPs(decoded.id, password)) {
-            return res
-              .status(500)
-              .json({
-                message: "Ocurrio un error al editar la contraseña del usuario",
-              });
+            return res.status(500).json({
+              message: "Ocurrio un error al editar la contraseña del usuario",
+            });
           } else {
             return res
               .status(200)
@@ -303,4 +324,5 @@ module.exports = {
   logout,
   recoverPassword,
   verificationToReset,
+  verifyCode,
 };

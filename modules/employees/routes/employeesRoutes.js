@@ -12,12 +12,13 @@ router.post('/logout', employeesController.logout);
 router.post('/login', employeesController.login);
 router.post('/filter', verifyToken, validateEmployeeFilter, employeesController.getEmployee);
 router.post('/filterAll', verifyToken, validateEmployeeFilterAll, employeesController.filterEmployeesAll);
+router.post('/recover', employeesController.recoverPassword);
+router.post('/verifyCode', employeesController.verifyCode);
 
+router.put('/verification', employeesController.verificationToReset);
 router.put('/edit', verifyToken, verifyRootUser, validateID, validateEmployee, employeesController.putEmployees);
 
 router.delete('/delete/:id', verifyToken, verifyRootUser, validateID, employeesController.deleteEmployee);
 
-router.post('/recover', employeesController.recoverPassword);
-router.put('/verification', employeesController.verificationToReset);
 
 module.exports = router;
