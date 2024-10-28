@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
-const { encryptCrypt } = require("../../../utils/crypto-js");
+const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
 const nodemailer = require('nodemailer');
 
 /* Key ECDSA (ES256) */
@@ -76,6 +76,7 @@ const getEmployee = async (req, res) => {
       .json({ error: "Ocurrió un error al obtener los registros" });
   }
 };
+
 const filterEmployeesAll = async (req, res) => {
   const data = req.body;
   try {
@@ -258,23 +259,23 @@ const verificationToReset = async (req, res) => {
       { algorithms: ["HS256"] },
       (err, decoded) => {
         if (!validateEmailAndId(decoded)) {
+        return res
+          .status(201)
+          .json({ message: "Los datos del usuario no coinciden" });
+      } else {
+        if (!EditPs(decoded.id, password)) {
           return res
-            .status(201)
-            .json({ message: "Los datos del usuario no coinciden" });
+            .status(500)
+            .json({
+              message: "Ocurrio un error al editar la contraseña del usuario",
+            });
         } else {
-          if (!EditPs(decoded.id, password)) {
-            return res
-              .status(500)
-              .json({
-                message: "Ocurrio un error al editar la contraseña del usuario",
-              });
-          } else {
-            return res
-              .status(200)
-              .json({ message: "Contraseña actualizada correctamente" });
-          }
+          return res
+            .status(200)
+            .json({ message: "Contraseña actualizada correctamente" });
         }
       }
+    }
     );
   } catch (error) {
     return res.status(400).send("Token inválido o expirado");
