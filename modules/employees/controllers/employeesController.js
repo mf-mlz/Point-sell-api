@@ -7,6 +7,7 @@ const fs = require("fs");
 const path = require("path");
 const nodemailer = require('nodemailer');
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
+const nodemailer = require('nodemailer');
 const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
 
 /* Key ECDSA (ES256) */
@@ -283,9 +284,16 @@ const verificationToReset = async (req, res) => {
       { algorithms: ["HS256"] },
       (err, decoded) => {
         if (!validateEmailAndId(decoded)) {
+        return res
+          .status(201)
+          .json({ message: "Los datos del usuario no coinciden" });
+      } else {
+        if (!EditPs(decoded.id, password)) {
           return res
-            .status(201)
-            .json({ message: "Los datos del usuario no coinciden" });
+            .status(500)
+            .json({
+              message: "Ocurrio un error al editar la contraseña del usuario",
+            });
         } else {
           if (!EditPs(decoded.id, password)) {
             return res.status(500).json({
@@ -298,6 +306,7 @@ const verificationToReset = async (req, res) => {
           }
         }
       }
+    }
     );
   } catch (error) {
     return res.status(400).send("Token inválido o expirado");
