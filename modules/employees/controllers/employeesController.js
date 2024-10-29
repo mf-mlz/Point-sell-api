@@ -3,7 +3,6 @@ const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
 const permissionsController = require("../../permissions/controllers/permissionsController");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
@@ -12,7 +11,6 @@ const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
 
-dotenv.config();
 const registerEmployees = async (req, res) => {
   const requiredFields = [
     "name",

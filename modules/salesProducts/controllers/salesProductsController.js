@@ -1,10 +1,8 @@
 const salesProductsService = require("../services/salesProductsService");
 const productsService = require("../../products/services/productsService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
-const dotenv = require("dotenv");
 const PDFDocument = require("pdfkit");
 const QRCode = require("qrcode");
-dotenv.config();
 
 const registerSalesProducts = async (req, res) => {
   const requiredFields = ["salesId", "productId", "quantity"];

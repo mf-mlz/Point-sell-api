@@ -1,9 +1,6 @@
 const connection = require("../../../config/database");
 const { createUpdatetAt } = require("../../../utils/helpers");
-const dotenv = require("dotenv");
 const fs = require("fs");
-dotenv.config();
-
 const Facturapi = require("facturapi").default;
 const facturapi = new Facturapi(process.env.FACTURAPI_KEY);
 
