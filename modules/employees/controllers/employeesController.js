@@ -3,7 +3,6 @@ const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
 const permissionsController = require("../../permissions/controllers/permissionsController");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path");
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");

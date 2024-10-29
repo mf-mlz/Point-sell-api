@@ -1,10 +1,6 @@
 const employeesService = require("../modules/employees/services/employeesService");
-const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const { decryptCrypt } = require("../utils/crypto-js");
-
-dotenv.config();
-
 const verifyRootUser = async (req, res, next) => {
   try {
     const token = req.cookies.token;

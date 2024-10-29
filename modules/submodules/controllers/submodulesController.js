@@ -1,9 +1,6 @@
 const submodulesService = require("../services/submodulesService");
 const { createUpdatetAt, verifyData } = require("../../../utils/helpers");
-const dotenv = require("dotenv");
 const { encryptCrypt } = require("../../../utils/crypto-js");
-
-dotenv.config();
 
 const registerPermissions = async (req, res) => {
   /* Verificar que el Modulo (Name) no sea Dashboard (Pendiente) */

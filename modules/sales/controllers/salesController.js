@@ -1,9 +1,6 @@
 const salesService = require("../services/salesService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-
-dotenv.config();
 
 const registerSales = async (req, res) => {
   const requiredFields = [
