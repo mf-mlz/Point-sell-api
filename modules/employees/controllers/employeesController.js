@@ -5,7 +5,6 @@ const permissionsController = require("../../permissions/controllers/permissions
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
-const nodemailer = require('nodemailer');
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
 const nodemailer = require('nodemailer');
 const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
