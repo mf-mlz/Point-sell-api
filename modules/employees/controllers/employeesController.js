@@ -144,7 +144,7 @@ const login = async (req, res) => {
 
         res.cookie("token", token, {
           httpOnly: true,
-          secure: false /* Production => true */,
+          secure: process.env.NODE_ENV === 'development' ? false : true /* Production => true */,
           sameSite: "Lax",
           maxAge: 7 * 24 * 60 * 60 * 1000,
           sameSite: "strict",
@@ -153,8 +153,12 @@ const login = async (req, res) => {
         /* Code SMS */
         const code = await generateCodeAuthSms();
 
-        /* Auth SMS */
-        const serviceSms = await sendSms(employeeData[0].phone, code);
+        /* Auth SMS => env development not Send SMS and console.log(code) */
+        const serviceSms = process.env.NODE_ENV === 'development' ? {status: true, message: `Código Enviado con Éxito al número: ******4090`} : await sendSms(employeeData[0].phone, code);
+
+        if(process.env.NODE_ENV === 'development'){
+          console.log(code);
+        }
 
         if (serviceSms.status) {
           const codeEncrypt = encryptCrypt(code);
