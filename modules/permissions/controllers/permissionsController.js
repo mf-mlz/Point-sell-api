@@ -1,4 +1,5 @@
 const permissionsService = require("../services/permissionsService");
+const modulesController = require("../../modules/controllers/modulesController");
 const { createUpdatetAt, verifyData } = require("../../../utils/helpers");
 const dotenv = require("dotenv");
 const { encryptCrypt } = require("../../../utils/crypto-js");
@@ -22,12 +23,11 @@ const registerPermissions = async (req, res) => {
       await permissionsService.registerPermissions(data);
     res.status(200).json({ message: registerPermissionsServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Registrar el Permiso" });
+    res.status(500).json({ error: err });
   }
 };
 
 const editPermissions = async (req, res) => {
-  /* Verificar que el Modulo (Name) no sea Dashboard (Pendiente) */
   const requiredFields = ["id", "role_id", "module"];
   const data = req.body;
 
@@ -43,14 +43,29 @@ const editPermissions = async (req, res) => {
     const editPermissionsServices = await permissionsService.editPermissions(
       data
     );
+
+    /* Search SubModules => data.access */
+    const modulesAndSubmodules =
+      await modulesController.fetchModulesAndSubmodules();
+    const subModules = modulesAndSubmodules
+      .filter((module) => module.modulo === data.module)
+      .map((module) => module.name);
+
+    if (subModules.length > 0) {
+      for (const name of subModules) {
+        const editAccess = await permissionsService.editPermissionsAccess(name, data.access);
+        if (!editAccess) {
+          res.status(500).json({ error: "Ocurrió un error al Editar los Permisos del Submódulo " + name });
+        }
+      }
+    }
     res.status(200).json({ message: editPermissionsServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Editar el Permiso" });
+    res.status(500).json({ error: err });
   }
 };
 
 const deletePermissions = async (req, res) => {
-  /* Verificar que el Modulo (Name) no sea Dashboard (Pendiente) */
   const id = req.params.id;
   try {
     const updated_at = createUpdatetAt();

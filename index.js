@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const dotenv = require('dotenv');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const permissionsRoutes = require('./modules/permissions/routes/permissionsRoutes');
@@ -16,10 +15,13 @@ const submodulesRoutes = require('./modules/submodules/routes/submodulesRoutes')
 const { requestLogger } = require('./middlewares/logMiddleware');
 const paymentsFormRoutes = require('./modules/paymentsForm/routes/paymentsFormRoutes');
 const cookieParser = require('cookie-parser');
-
 const validator = require('./services/jwt');
 
-dotenv.config();
+/* Config Dotenv */
+const dotenv = require('dotenv');
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: envFile });
+
 
 const app = express();
 
