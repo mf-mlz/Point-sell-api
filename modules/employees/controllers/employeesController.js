@@ -284,19 +284,14 @@ const verificationToReset = async (req, res) => {
       { algorithms: ["HS256"] },
       (err, decoded) => {
         if (!validateEmailAndId(decoded)) {
-        return res
-          .status(201)
-          .json({ message: "Los datos del usuario no coinciden" });
-      } else {
-        if (!EditPs(decoded.id, password)) {
           return res
-            .status(500)
-            .json({
-              message: "Ocurrio un error al editar la contraseña del usuario",
-            });
+            .status(201)
+            .json({ message: "Los datos del usuario no coinciden" });
         } else {
           if (!EditPs(decoded.id, password)) {
-            return res.status(500).json({
+            return res
+              .status(500)
+              .json({
                 message: "Ocurrio un error al editar la contraseña del usuario",
               });
           } else {
@@ -306,7 +301,6 @@ const verificationToReset = async (req, res) => {
           }
         }
       }
-    }
     );
   } catch (error) {
     return res.status(400).send("Token inválido o expirado");
