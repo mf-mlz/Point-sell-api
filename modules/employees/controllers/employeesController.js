@@ -5,11 +5,22 @@ const permissionsController = require("../../permissions/controllers/permissions
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
+const nodemailer = require('nodemailer');
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
 const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
 
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SERVICE_NODE,
+  port: process.env.PORT_NODE,
+  secure: process.env.SECURITY_NODE, // true for port 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_NODE,
+    pass: process.env.PW_NODE,
+  },
+});
 
 const registerEmployees = async (req, res) => {
   const requiredFields = [
@@ -63,6 +74,7 @@ const getEmployee = async (req, res) => {
       .json({ error: "Ocurrió un error al obtener los registros" });
   }
 };
+
 const filterEmployeesAll = async (req, res) => {
   const data = req.body;
   try {
@@ -139,9 +151,9 @@ const login = async (req, res) => {
         const code = await generateCodeAuthSms();
 
         /* Auth SMS => env development not Send SMS and console.log(code) */
-        const serviceSms = process.env.NODE_ENV === 'development' ? {status: true, message: `Código Enviado con Éxito al número: ******4090`} : await sendSms(employeeData[0].phone, code);
+        const serviceSms = process.env.NODE_ENV === 'development' ? { status: true, message: `Código Enviado con Éxito al número: ******4090` } : await sendSms(employeeData[0].phone, code);
 
-        if(process.env.NODE_ENV === 'development'){
+        if (process.env.NODE_ENV === 'development') {
           console.log(code);
         }
 
@@ -253,7 +265,6 @@ const recoverPassword = async (req, res) => {
     text: "",
     html: `Haz clic en el siguiente enlace para restablecer tu contraseña: <a href="${url}">Restablecer contraseña</a>`,
   });
-  // console.log("Message sent: %s", info.messageId);
   return res
     .status(200)
     .json({ data: "Correo de recuperación enviado a " + paylod.email });
@@ -278,8 +289,8 @@ const verificationToReset = async (req, res) => {
         } else {
           if (!EditPs(decoded.id, password)) {
             return res.status(500).json({
-              message: "Ocurrio un error al editar la contraseña del usuario",
-            });
+                message: "Ocurrio un error al editar la contraseña del usuario",
+              });
           } else {
             return res
               .status(200)
