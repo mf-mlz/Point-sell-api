@@ -96,21 +96,19 @@ const filterPermissions = async (req, res) => {
 
 const getPermissionsByRoleAndModule = async (req, res) => {
   try {
-    let userSessionEncrypt = req.headers["module-role"];
-    userSessionEncrypt = userSessionEncrypt
-      ? userSessionEncrypt.replace(/['"]+/g, "")
-      : null;
-
-    if (!userSessionEncrypt) {
+    let userSession = req.headers["module-role"];
+    
+    if (!userSession) {
       res.status(401).json({
         status: false,
         message: "La Petición no cuenta con la cabecera de Sesión",
       });
     }
-
+    
+    
     const getPermissionsByRoleAndModule =
       await permissionsService.getPermissionsByRoleAndModule(
-        userSessionEncrypt
+        JSON.parse(userSession)
       );
     if (!getPermissionsByRoleAndModule) {
       res.status(200).json({
@@ -120,7 +118,7 @@ const getPermissionsByRoleAndModule = async (req, res) => {
     } else {
       res.status(200).json({
         status: true,
-        data: encryptCrypt(JSON.stringify(getPermissionsByRoleAndModule)),
+        data: JSON.stringify(getPermissionsByRoleAndModule),
       });
     }
   } catch (err) {

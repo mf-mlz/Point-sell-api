@@ -242,6 +242,17 @@ const getModuleAccessByRole = async (req, res) => {
   }
 };
 
+const getModuleAccessByRoleReturn = async (data) => {
+  try {
+    const getModuleAccessByRole = await modulesService.getModuleAccessByRole(
+      data
+    );
+    return getModuleAccessByRole;
+  } catch (err) {
+    return [];
+  }
+};
+
 module.exports = {
   registerPermissions,
   editPermissions,
@@ -251,5 +262,6 @@ module.exports = {
   filterPermissions,
   getPermissionsByRoleAndModule,
   getModuleAccessByRole,
-  fetchModulesAndSubmodules
+  fetchModulesAndSubmodules,
+  getModuleAccessByRoleReturn
 };

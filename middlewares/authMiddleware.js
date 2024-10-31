@@ -103,7 +103,6 @@ const validationToken = (req, res, next) => {
 /* Verify Payload */
 const validateDecodedToken = (userSession, payload) => {
   if (
-    userSession.id === payload.id &&
     userSession.name === payload.name &&
     userSession.role_name === payload.role_name
   ) {

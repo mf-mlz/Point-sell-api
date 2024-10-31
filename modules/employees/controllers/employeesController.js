@@ -2,11 +2,12 @@ const employeesService = require("../services/employeesService");
 const passwordService = require("../services/passwordService");
 const { verifyData, createUpdatetAt } = require("../../../utils/helpers");
 const permissionsController = require("../../permissions/controllers/permissionsController");
+const modulesController = require("../../modules/controllers/modulesController");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
 
 /* Key ECDSA (ES256) */
@@ -118,42 +119,32 @@ const login = async (req, res) => {
       );
 
       if (verifyPassword) {
+        /* Get Modules */
+        const modules = await modulesController.getModuleAccessByRoleReturn(
+          encryptCrypt(JSON.stringify({ role_name: employeeData[0].role_name }))
+        );
         const payload = {
           id: employeeData[0].id,
           name: employeeData[0].name,
           role_name: employeeData[0].role_name,
+          modules: decryptCrypt(modules),
         };
 
         const payloadEncrypt = encryptCrypt(JSON.stringify(payload));
-
-        const options = {
-          algorithm: "ES256",
-          expiresIn: "7d",
-        };
-
-        const token = jwt.sign(
-          {
-            data: payloadEncrypt,
-          },
-          pKey,
-          options
-        );
-
-        res.cookie("token", token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'development' ? false : true /* Production => true */,
-          sameSite: "Lax",
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-          sameSite: "strict",
-        });
 
         /* Code SMS */
         const code = await generateCodeAuthSms();
 
         /* Auth SMS => env development not Send SMS and console.log(code) */
-        const serviceSms = process.env.NODE_ENV === 'development' ? { status: true, message: `Código Enviado con Éxito al número: ******4090` } : await sendSms(employeeData[0].phone, code);
+        const serviceSms =
+          process.env.NODE_ENV === "development"
+            ? {
+                status: true,
+                message: `Código Enviado con Éxito al número: ******4090`,
+              }
+            : await sendSms(employeeData[0].phone, code);
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === "development") {
           console.log(code);
         }
 
@@ -183,10 +174,49 @@ const login = async (req, res) => {
   }
 };
 
+/* Verify Code and Generate Token Cookie */
 const verifyCode = async (req, res) => {
   const data = req.body;
   let codeDecrypt = decryptCrypt(data.codeResend);
-  res.status(200).json({ status: codeDecrypt === data.code });
+  try {
+    /* Code Success */
+    if (codeDecrypt === data.code) {
+      const options = {
+        algorithm: "ES256",
+        expiresIn: "7d",
+      };
+
+      const token = jwt.sign({ data: data.data }, pKey, options);
+
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure:
+          process.env.NODE_ENV === "development"
+            ? false
+            : true /* Production => true */,
+        sameSite: "Lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "strict",
+      });
+
+      const dataDecrypt = decryptCrypt(data.data);
+      delete dataDecrypt.id;
+      res.status(200).json({
+        message: "Inicio de Sesión Exitoso",
+      });
+    } else {
+      /* Code Not Success */
+      res.status(401).json({
+        error: "El código ingresado es incorrecto, intentalo nuevamente.",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      error:
+        error.error ||
+        "Ocurrió un error al Verificar el Código de Autenticación",
+    });
+  }
 };
 
 const getAllEmployees = async (req, res) => {
@@ -288,11 +318,9 @@ const verificationToReset = async (req, res) => {
             .json({ message: "Los datos del usuario no coinciden" });
         } else {
           if (!EditPs(decoded.id, password)) {
-            return res
-              .status(500)
-              .json({
-                message: "Ocurrio un error al editar la contraseña del usuario",
-              });
+            return res.status(500).json({
+              message: "Ocurrio un error al editar la contraseña del usuario",
+            });
           } else {
             return res
               .status(200)
@@ -328,6 +356,54 @@ const EditPs = async (id, password) => {
   }
 };
 
+/* Return Data Encrypt */
+const returnDataSession = async (req, res) => {
+  try {
+    let userSessionEncrypt = req.headers["session-employee"];
+
+    if (!userSessionEncrypt) {
+      res
+        .status(401)
+        .json({ error: "La petición no tiene cabecera de autenticación" });
+    }
+    userSessionEncrypt = userSessionEncrypt
+      ? userSessionEncrypt.replace(/['"]+/g, "")
+      : null;
+
+    const data = decryptCrypt(userSessionEncrypt);
+    delete data.modules;
+    delete data.id;
+    res.status(200).json({ data: data });
+  } catch (err) {
+    res.status(401).json({
+      error: err.message || "Ocurrió un error al obtener los datos de sesión",
+    });
+  }
+};
+
+const returnModuleSession = async (req, res) => {
+  try {
+    let userSessionEncrypt = req.headers["session-employee"];
+
+    if (!userSessionEncrypt) {
+      res
+        .status(401)
+        .json({ error: "La petición no tiene cabecera de autenticación" });
+    }
+    userSessionEncrypt = userSessionEncrypt
+      ? userSessionEncrypt.replace(/['"]+/g, "")
+      : null;
+
+    const data = decryptCrypt(userSessionEncrypt);
+
+    res.status(200).json({ data: data.modules });
+  } catch (err) {
+    res.status(401).json({
+      error: err.message || "Ocurrió un error al obtener los datos de sesión",
+    });
+  }
+};
+
 module.exports = {
   getAllEmployees,
   registerEmployees,
@@ -340,4 +416,6 @@ module.exports = {
   recoverPassword,
   verificationToReset,
   verifyCode,
+  returnDataSession,
+  returnModuleSession,
 };
