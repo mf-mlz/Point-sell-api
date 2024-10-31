@@ -48,10 +48,10 @@ const validateInvoice = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-    body('id_employee')
+    body('employee')
         .trim()
         .isLength({ min: 1 })
-        .isNumeric(),
+        .isString(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -72,11 +72,11 @@ const validateInvoiceFilter = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-    body('id_employee')
+    body('employee')
         .optional()
         .trim()
         .isLength({ min: 1 })
-        .isNumeric(),
+        .isString(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -93,10 +93,10 @@ const validateDataCancel = [
         }
         return true;
     }),
-    body('id_employee')
+    body('employee')
         .trim()
         .isLength({ min: 1 })
-        .isNumeric(),
+        .isString(),
     body('id_invoice')
         .trim()
         .isLength({ min: 1})

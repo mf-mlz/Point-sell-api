@@ -48,11 +48,11 @@ const validateSale = [
         .isLength({ min: 1 })
         .isNumeric(),
         
-    body('employeesId')
+    body('employees')
         .optional()
         .trim()
         .isLength({ min: 1 })
-        .isNumeric(),
+        .isString(),
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -109,11 +109,11 @@ const validateSaleFilter = [
         .trim()
         .isLength({ min: 1 })
         .isNumeric(),
-    body('employeesId')
+    body('employees')
         .optional()
         .trim()
         .isLength({ min: 1 })
-        .isNumeric(),
+        .isString(),
     body('dateBefore')
         .optional()
         .isISO8601()

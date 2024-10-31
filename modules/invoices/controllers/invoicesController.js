@@ -16,7 +16,7 @@ const createInvoice = async (req, res) => {
         .json({ error: `El campo ${missingField} es requerido` });
     }
 
-    const { customer, id_sale, id_employee } = data;
+    const { customer, id_sale, employee } = data;
 
     const objClient = {
       id: customer,
@@ -54,7 +54,7 @@ const createInvoice = async (req, res) => {
         id_sale: id_sale,
         id_invoice: responseInvoice.id,
         folio: responseInvoice.series + responseInvoice.folio_number,
-        id_employee: id_employee,
+        employee: employee,
       };
       const registerInvoice = await invoicesService.registerInvoice(dataInsert);
 
