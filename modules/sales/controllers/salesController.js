@@ -30,7 +30,7 @@ const registerSales = async (req, res) => {
         });
     }
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -40,15 +40,15 @@ const filterSales = async (req, res) => {
     delete data.employeeId;
     const salesData = await salesService.getSale(data);
     if (salesData.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${salesData.length} registros`,
         sales: salesData,
       });
     } else {
-      res.status(401).json({ message: `No se encontraron registros` });
+      return res.status(401).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ error: "Ocurrió un error al obtener los registros" });
   }
@@ -57,9 +57,9 @@ const filterSales = async (req, res) => {
 const getAllSales = async (req, res) => {
   try {
     const sales = await salesService.getAllSales();
-    res.json(sales);
+    return res.json(sales);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -75,9 +75,9 @@ const getSaleInfoCompleteById = async (req, res) => {
       return res.status(404).json({ message: "La Venta No Existe" });
     }
 
-    res.json(saleInfo);
+    return res.json(saleInfo);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -115,9 +115,9 @@ const putSale = async (req, res) => {
     data.updated_at = createUpdatetAt();
 
     const salesEmployeesServices = await salesService.putSale(data);
-    res.status(201).json({ message: salesEmployeesServices });
+    return res.status(201).json({ message: salesEmployeesServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -126,9 +126,9 @@ const deleteSale = async (req, res) => {
 
   try {
     const deleteSaleServices = await salesService.deleteSale(data);
-    res.status(201).json({ message: deleteSaleServices });
+    return res.status(200).json({ message: deleteSaleServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -138,15 +138,15 @@ const postSaleDate = async (req, res) => {
     delete data.employeeId;
     const postSaleDate = await salesService.postSaleDate(data);
     if (postSaleDate.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${postSaleDate.length} registros`,
         sales: postSaleDate,
       });
     } else {
-      res.status(200).json({ message: `No se encontraron registros` });
+      return res.status(200).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ error: "Ocurrió un error al obtener los registros" });
   }

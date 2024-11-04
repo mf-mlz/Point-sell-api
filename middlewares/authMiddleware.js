@@ -57,9 +57,7 @@ const verifyToken = (req, res, next) => {
         }
       });
     } catch (err) {
-      console.log(err);
-      
-      res.status(401).json({ message: "Acceso Inválido" });
+      return res.status(401).json({ message: "Acceso Inválido" });
     }
   }
 };

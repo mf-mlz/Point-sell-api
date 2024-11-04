@@ -4,9 +4,9 @@ const { verifyData, createUpdatetAt } = require('../../../utils/helpers');
 const getAllPaymentsForm = async (req, res) => {
     try {
         const paymentsForm = await paymentsFormService.getAllPaymentsForm();
-        res.json(paymentsForm);
+        return res.json(paymentsForm);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -18,17 +18,17 @@ const filterPaymentsForm = async (req, res) => {
         const paymentsFormData = await paymentsFormService.getPaymentsForm(data);
 
         if (paymentsFormData.length > 0) {
-            res.status(401).json({
+            return res.status(401).json({
                 message: `Se encontraron ${paymentsFormData.length} registros`,
                 paymentForm: paymentsFormData
             });
 
         } else {
-            res.status(401).json({ message: `No se encontraron registros` });
+            return res.status(401).json({ message: `No se encontraron registros` });
         }
 
     } catch (err) {
-        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
+        return res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
     }
 };
 
@@ -47,10 +47,10 @@ const registerPaymentsForm = async (req, res) => {
 
     try {
         const registerPaymentsFormServices = await paymentsFormService.registerPaymentsForm(data);
-        res.status(201).json({ message: registerPaymentsFormServices });
+        return res.status(201).json({ message: registerPaymentsFormServices });
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -72,10 +72,10 @@ const putPaymentsForm = async (req, res) => {
         data.updated_at = createUpdatetAt();
 
         const registerPaymentsFormServices = await paymentsFormService.putPaymentsForm(data);
-        res.status(201).json({ message: registerPaymentsFormServices });
+        return res.status(201).json({ message: registerPaymentsFormServices });
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -94,10 +94,10 @@ const deletePaymentsForm = async (req, res) => {
     try {
 
         const deletePaymentsFormServices = await paymentsFormService.deletePaymentsForm(data);
-        res.status(201).json({ message: deletePaymentsFormServices });
+        return res.status(201).json({ message: deletePaymentsFormServices });
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 

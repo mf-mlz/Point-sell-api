@@ -50,9 +50,9 @@ const registerEmployees = async (req, res) => {
     const registerEmployeesServices = await employeesService.registerEmployees(
       data
     );
-    res.status(200).json({ message: registerEmployeesServices });
+    return res.status(200).json({ message: registerEmployeesServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -62,17 +62,15 @@ const getEmployee = async (req, res) => {
     delete data.employeeId;
     const employeeData = await employeesService.getEmployee(data);
     if (employeeData.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${employeeData.length} registros`,
         employee: employeeData,
       });
     } else {
-      res.status(200).json({ message: `No se encontraron registros` });
+      return res.status(200).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los registros" });
+    return res.status(500).json({ error: "Ocurrió un error al obtener los registros" });
   }
 };
 
@@ -81,17 +79,15 @@ const filterEmployeesAll = async (req, res) => {
   try {
     const employeeData = await employeesService.getEmployeeAll(data);
     if (employeeData.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${employeeData.length} registros`,
         employee: employeeData,
       });
     } else {
-      res.status(200).json({ message: `No se encontraron registros` });
+      return res.status(200).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Ocurrió un error al obtener los registros" });
+    return res.status(500).json({ error: "Ocurrió un error al obtener los registros" });
   }
 };
 
@@ -362,9 +358,7 @@ const returnDataSession = async (req, res) => {
     let userSessionEncrypt = req.headers["session-employee"];
 
     if (!userSessionEncrypt) {
-      res
-        .status(401)
-        .json({ error: "La petición no tiene cabecera de autenticación" });
+      return res.status(401).json({ error: "La petición no tiene cabecera de autenticación" });
     }
     userSessionEncrypt = userSessionEncrypt
       ? userSessionEncrypt.replace(/['"]+/g, "")
@@ -373,9 +367,9 @@ const returnDataSession = async (req, res) => {
     const data = decryptCrypt(userSessionEncrypt);
     delete data.modules;
     delete data.id;
-    res.status(200).json({ data: data });
+    return res.status(200).json({ data: data });
   } catch (err) {
-    res.status(401).json({
+    return res.status(401).json({
       error: err.message || "Ocurrió un error al obtener los datos de sesión",
     });
   }
@@ -386,9 +380,7 @@ const returnModuleSession = async (req, res) => {
     let userSessionEncrypt = req.headers["session-employee"];
 
     if (!userSessionEncrypt) {
-      res
-        .status(401)
-        .json({ error: "La petición no tiene cabecera de autenticación" });
+      res.status(401).json({ error: "La petición no tiene cabecera de autenticación" });
     }
     userSessionEncrypt = userSessionEncrypt
       ? userSessionEncrypt.replace(/['"]+/g, "")

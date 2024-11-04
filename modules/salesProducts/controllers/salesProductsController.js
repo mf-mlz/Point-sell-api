@@ -25,9 +25,9 @@ const registerSalesProducts = async (req, res) => {
     data.total = parseFloat(productPrice) * parseFloat(quantity);
     const registerSalesProductsService =
       await salesProductsService.registerSalesProducts(data);
-    res.status(201).json({ message: registerSalesProductsService });
+      return res.status(201).json({ message: registerSalesProductsService });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -37,12 +37,12 @@ const filterSalesProducts = async (req, res) => {
     delete data.employeeId;
     const salesData = await salesProductsService.getSalesProducts(data);
     if (salesData.length > 0) {
-      res.status(401).json({
+      return res.status(401).json({
         message: `Se encontraron ${salesData.length} registros`,
         sales: salesData,
       });
     } else {
-      res.status(401).json({ message: `No se encontraron registros` });
+      return res.status(401).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
     res
@@ -57,15 +57,15 @@ const filterJoinSalesProducts = async (req, res) => {
     delete data.employeeId;
     const salesData = await salesProductsService.getSalesJoinProducts(data);
     if (salesData.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${salesData.length} registros`,
         sales: salesData,
       });
     } else {
-      res.status(200).json({ message: `No se encontraron registros` });
+      return res.status(200).json({ message: `No se encontraron registros` });
     }
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({ error: "Ocurrió un error al obtener los registros" });
   }
@@ -74,9 +74,9 @@ const filterJoinSalesProducts = async (req, res) => {
 const getAllSalesProducts = async (req, res) => {
   try {
     const salesProducts = await salesProductsService.getAllSalesProducts();
-    res.json(salesProducts);
+    return res.json(salesProducts);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -99,9 +99,9 @@ const putSalesProducts = async (req, res) => {
     const salesProductsServices = await salesProductsService.putSalesProducts(
       data
     );
-    res.status(201).json({ message: salesProductsServices });
+    return res.status(201).json({ message: salesProductsServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -121,9 +121,9 @@ const deleteSalesProducts = async (req, res) => {
   try {
     const deleteSalesProductsServices =
       await salesProductsService.deleteSalesProducts(data);
-    res.status(201).json({ message: deleteSalesProductsServices });
+      return res.status(201).json({ message: deleteSalesProductsServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -309,7 +309,7 @@ const generateTicket = async (req, res) => {
 
     doc.pipe(res);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 

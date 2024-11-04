@@ -26,7 +26,7 @@ const verifyRootUser = async (req, res, next) => {
 
     next();
   } catch (err) {
-    res.status(400).json({ message: "Acceso Inválido" });
+    return res.status(400).json({ message: "Acceso Inválido" });
   }
 };
 
@@ -59,9 +59,7 @@ const verifyRolSaleRegister = async (req, res, next) => {
 
     next();
   } catch (err) {
-    console.log(err);
-
-    res.status(400).json({ message: "Acceso Inválido" });
+    return res.status(400).json({ message: "Acceso Inválido" });
   }
 };
 

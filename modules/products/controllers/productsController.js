@@ -27,9 +27,9 @@ const registerProducts = async (req, res) => {
     const registerProductsServices = await productsService.registerProducts(
       data
     );
-    res.status(201).json(registerProductsServices);
+    return res.status(201).json(registerProductsServices);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -53,9 +53,9 @@ const uploadPhoto = async (req, res) => {
   try {
     data.updated_at = createUpdatetAt();
     const putProductPhotoServices = await productsService.putProductPhoto(data);
-    res.status(201).json({ message: putProductPhotoServices });
+    return res.status(201).json({ message: putProductPhotoServices });
   } catch (err) {
-    res.status(500).json({ error: err });
+    return res.status(500).json({ error: err });
   }
 };
 
@@ -86,9 +86,9 @@ const filterProducts = async (req, res) => {
 const getAllProducts = async (req, res) => {
   try {
     const products = await productsService.getAllProducts();
-    res.json(products);
+    return res.json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -119,9 +119,9 @@ const putProducts = async (req, res) => {
     data.updated_at = createUpdatetAt();
 
     const registerProductsServices = await productsService.putProducts(data);
-    res.status(201).json({ message: registerProductsServices });
+    return res.status(201).json({ message: registerProductsServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -130,27 +130,27 @@ const deleteProduct = async (req, res) => {
 
   try {
     const deleteProductServices = await productsService.deleteProduct(id);
-    res.status(201).json({ message: deleteProductServices });
+    return res.status(201).json({ message: deleteProductServices });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
 const getCategories = async (req, res) => {
   try {
     const products = await productsService.getCategories();
-    res.json(products);
+    return res.json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const getAllKeySatProducts = async (req, res) => {
   try {
     const products = await productsService.getAllKeySatProducts();
-    res.json(products);
+    return res.json(products);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

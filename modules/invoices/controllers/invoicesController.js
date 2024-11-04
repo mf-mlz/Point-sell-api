@@ -47,7 +47,7 @@ const createInvoice = async (req, res) => {
 
     const responseInvoice = await invoicesService.createInvoice(invoiceData);
     if (typeof responseInvoice === "string") {
-      res.status(500).json({ error: responseInvoice });
+      return res.status(500).json({ error: responseInvoice });
     } else {
       /* Add Info in Table Invoices */
       const dataInsert = {
@@ -59,15 +59,13 @@ const createInvoice = async (req, res) => {
       const registerInvoice = await invoicesService.registerInvoice(dataInsert);
 
       if (registerInvoice) {
-        res.status(200).json({ message: "Factura Generada con Éxito" });
+        return res.status(200).json({ message: "Factura Generada con Éxito" });
       } else {
-        res
-          .status(500)
-          .json({ error: "Ocurrió un error al registrar la Factura" });
+        return res.status(500).json({ error: "Ocurrió un error al registrar la Factura" });
       }
     }
   } catch (error) {
-    res.status(500).json({ error: "Ocurrió un error al crear la Factura" });
+    return res.status(500).json({ error: "Ocurrió un error al crear la Factura" });
   }
 };
 
@@ -132,12 +130,12 @@ const sendEmail = async (req, res) => {
   try {
     const responseSendEmail = await invoicesService.sendEmail(data);
     if (responseSendEmail) {
-      res.status(200).send({ message: "Correo enviado" });
+      return res.status(200).send({ message: "Correo enviado" });
     } else {
-      res.status(500).send({ error: "Error al enviar el correo" });
+      return res.status(500).send({ error: "Error al enviar el correo" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Ocurrió un error al enviar la Factura" });
+    return res.status(500).json({ error: "Ocurrió un error al enviar la Factura" });
   }
 };
 
@@ -156,10 +154,10 @@ const downloadInvoice = async (req, res) => {
     });
 
     zipStream.on("error", (err) => {
-      res.status(500).send("Error al descargar el archivo");
+      return res.status(500).send("Error al descargar el archivo");
     });
   } catch (error) {
-    res.status(500).json({ error: "Ocurrió un error al descargar la Factura" });
+    return res.status(500).json({ error: "Ocurrió un error al descargar la Factura" });
   }
 };
 
@@ -172,17 +170,17 @@ const cancelInvoice = async (req, res) => {
       /* Modificamos los Campos de Status de la Factura */
       const responsePut = await invoicesService.putStatusInvoice(data);
       if (responsePut) {
-        res.status(200).json({ message: "Factura Cancelada con Éxito" });
+        return res.status(200).json({ message: "Factura Cancelada con Éxito" });
       } else {
-        res.status(500).json({
+        return res.status(500).json({
           message: "Ocurrió un error al Cancelar la Factura en el Registro",
         });
       }
     } else {
-      res.status(500).json({ error: response });
+      return res.status(500).json({ error: response });
     }
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 
@@ -193,15 +191,15 @@ const getInvoicesByIdSale = async (req, res) => {
     const response = await invoicesService.getInvoicesByIdSale(data);
     
     if (response.length > 0) {
-      res.status(200).json({
+      return res.status(200).json({
         message: `Se encontraron ${response.length} registros`,
         invoices: response,
       });
     } else {
-      res.status(200).json({ message: `No se encontraron registros` });
+      return res.status(200).json({ message: `No se encontraron registros` });
     }
   } catch (error) {
-    res.status(500).json({ error: error });
+    return res.status(500).json({ error: error });
   }
 };
 

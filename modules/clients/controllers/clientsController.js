@@ -18,10 +18,10 @@ const registerClients = async (req, res) => {
     try {
 
         const registerClientsServices = await clientsService.registerClients(data);
-        res.status(201).json({ message: registerClientsServices });
+        return res.status(201).json({ message: registerClientsServices });
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -35,22 +35,22 @@ const filterClients = async (req, res) => {
         const clientData = await clientsService.getClient(data);
 
         if (clientData.length > 0) {
-            res.status(200).json({ message: `Se encontraron ${clientData.length} registros`, client: clientData });
+            return res.status(200).json({ message: `Se encontraron ${clientData.length} registros`, client: clientData });
         } else {
-            res.status(200).json({ message: `No se encontraron registros` });
+            return res.status(200).json({ message: `No se encontraron registros` });
         }
 
     } catch (err) {
-        res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
+        return res.status(500).json({ error: 'Ocurrió un error al obtener los registros' });
     }
 };
 
 const getAllClients = async (req, res) => {
     try {
         const clients = await clientsService.getAllClients();
-        res.json(clients);
+        return res.json(clients);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
@@ -72,10 +72,10 @@ const putClients = async (req, res) => {
         data.updated_at = createUpdatetAt();
 
         const registerClientsServices = await clientsService.putClients(data);
-        res.status(201).json({ message: registerClientsServices });
+        return res.status(201).json({ message: registerClientsServices });
 
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 
@@ -84,9 +84,9 @@ const deleteClient = async (req, res) => {
     const id = req.params.id;
     try {
         const deleteClientServices = await clientsService.deleteClient(id);
-        res.status(200).json({ message: deleteClientServices });
+        return res.status(200).json({ message: deleteClientServices });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        return res.status(500).json({ error: err.message });
     }
 };
 

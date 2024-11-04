@@ -18,9 +18,11 @@ const registerPermissions = async (req, res) => {
     const registermodulesServices = await modulesService.registerPermissions(
       data
     );
-    res.status(200).json({ message: registermodulesServices });
+    return res.status(200).json({ message: registermodulesServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Registrar el Permiso" });
+    return res
+      .status(500)
+      .json({ error: "Ocurrió un error al Registrar el Permiso" });
   }
 };
 
@@ -39,9 +41,11 @@ const editPermissions = async (req, res) => {
   try {
     data.updated_at = createUpdatetAt();
     const editmodulesServices = await modulesService.editPermissions(data);
-    res.status(200).json({ message: editmodulesServices });
+    return res.status(200).json({ message: editmodulesServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Editar el Permiso" });
+    return res
+      .status(500)
+      .json({ error: "Ocurrió un error al Editar el Permiso" });
   }
 };
 
@@ -54,9 +58,11 @@ const deletePermissions = async (req, res) => {
       id,
       updated_at
     );
-    res.status(200).json({ message: deletemodulesServices });
+    return res.status(200).json({ message: deletemodulesServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Eliminar el Permiso" });
+    return res
+      .status(500)
+      .json({ error: "Ocurrió un error al Eliminar el Permiso" });
   }
 };
 
@@ -84,9 +90,11 @@ const getAllModules = async (req, res) => {
       arrayModules.push(obj);
     }
 
-    res.status(200).json({ modules: arrayModules });
+    return res.status(200).json({ modules: arrayModules });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
+    return res
+      .status(500)
+      .json({ error: "Ocurrió un error al Obtener los Permisos" });
   }
 };
 
@@ -125,9 +133,9 @@ const getAllModulesAndSubmodules = async (req, res) => {
       if (a.name > b.name) return 1;
       return 0;
     });
-    res.status(200).json({ modulesSubmodules: arrayModules });
+    return res.status(200).json({ modulesSubmodules: arrayModules });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Modulos" });
+    return res.status(500).json({ error: "Ocurrió un error al Obtener los Modulos" });
   }
 };
 
@@ -171,9 +179,9 @@ const filterPermissions = async (req, res) => {
   try {
     const data = req.body;
     const filtermodulesServices = await modulesService.filterPermissions(data);
-    res.status(200).json({ permissions: filtermodulesServices });
+    return res.status(200).json({ permissions: filtermodulesServices });
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
+    return res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
   }
 };
 
@@ -185,7 +193,7 @@ const getPermissionsByRoleAndModule = async (req, res) => {
       : null;
 
     if (!userSessionEncrypt) {
-      res.status(401).json({
+      return res.status(401).json({
         status: false,
         message: "La Petición no cuenta con la cabecera de Sesión",
       });
@@ -194,18 +202,18 @@ const getPermissionsByRoleAndModule = async (req, res) => {
     const getPermissionsByRoleAndModule =
       await modulesService.getPermissionsByRoleAndModule(userSessionEncrypt);
     if (!getPermissionsByRoleAndModule) {
-      res.status(200).json({
+      return res.status(200).json({
         status: false,
         data: "Sin Permisos Registrados",
       });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         status: true,
         data: encryptCrypt(JSON.stringify(getPermissionsByRoleAndModule)),
       });
     }
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
+    return res.status(500).json({ error: "Ocurrió un error al Obtener los Permisos" });
   }
 };
 
@@ -217,7 +225,7 @@ const getModuleAccessByRole = async (req, res) => {
       : null;
 
     if (!sessionEmployee) {
-      res.status(401).json({
+      return res.status(401).json({
         status: false,
         message: "La Petición no cuenta con la cabecera de Sesión",
       });
@@ -227,18 +235,18 @@ const getModuleAccessByRole = async (req, res) => {
       sessionEmployee
     );
     if (!getModuleAccessByRole) {
-      res.status(200).json({
+      return res.status(200).json({
         status: false,
         data: "Sin Módulos Registrados",
       });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         status: true,
         data: getModuleAccessByRole,
       });
     }
   } catch (err) {
-    res.status(500).json({ error: "Ocurrió un error al Obtener los Módulos" });
+    return res.status(500).json({ error: "Ocurrió un error al Obtener los Módulos" });
   }
 };
 
@@ -263,5 +271,5 @@ module.exports = {
   getPermissionsByRoleAndModule,
   getModuleAccessByRole,
   fetchModulesAndSubmodules,
-  getModuleAccessByRoleReturn
+  getModuleAccessByRoleReturn,
 };
