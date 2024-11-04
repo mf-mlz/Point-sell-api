@@ -7,14 +7,14 @@ const { validateID, validatePermissions, validatePermissionsFilter } = require('
 
 router.get('/', verifyToken, verifyRootUser, modulesController.getAllModules);
 router.get('/getModulesAndSubmodules', verifyToken, verifyRootUser, modulesController.getAllModulesAndSubmodules);
-// router.get('/getPermissionsByRole', verifyToken, modulesController.getPermissionsByRoleAndModule);
-// router.get('/getModuleAccessByRole', verifyToken, modulesController.getModuleAccessByRole);
+ router.get('/getPermissionsByRole', verifyToken, modulesController.getPermissionsByRoleAndModule);
+ router.get('/getModuleAccessByRole', verifyToken, modulesController.getModuleAccessByRole);
 
-// router.post('/register', verifyToken, verifyRootUser, validatePermissions, modulesController.registerPermissions);
-// router.post('/filter', verifyToken, verifyRootUser, validateID, validatePermissionsFilter, modulesController.filterPermissions);
+ router.post('/register', verifyToken, verifyRootUser, validatePermissions, modulesController.registerPermissions);
+ router.post('/filter', verifyToken, verifyRootUser, validateID, validatePermissionsFilter, modulesController.filterPermissions);
 
-// router.put('/edit', verifyToken, verifyRootUser, validateID, validatePermissions, modulesController.editPermissions);
+ router.put('/edit', verifyToken, verifyRootUser, validateID, validatePermissions, modulesController.editPermissions);
 
-// router.delete('/delete/:id', verifyToken, verifyRootUser, validateID, modulesController.deletePermissions);
+ router.delete('/delete/:id', verifyToken, verifyRootUser, validateID, modulesController.deletePermissions);
 
 module.exports = router;

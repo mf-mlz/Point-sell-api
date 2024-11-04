@@ -129,6 +129,15 @@ const putEmployeesPs = (employee) => {
   });
 };
 
+const getEmployeeIdByName = (id) => {
+  return new Promise((resolve, reject) => {
+    connection.query("CALL GetEmployeeIdByName(?)", [id], (error, results) => {
+      if (error) return reject(error);
+      resolve(results[0]);
+    });
+  });
+};
+
 module.exports = {
   getAllEmployees,
   registerEmployees,
@@ -137,5 +146,6 @@ module.exports = {
   getEmployeeAll,
   putEmployees,
   deleteEmployee,
-  putEmployeesPs
+  putEmployeesPs,
+  getEmployeeIdByName
 };

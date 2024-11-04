@@ -113,9 +113,9 @@ const filterPermissions = (data) => {
 };
 
 /* Get Permissions By Role/Module Session */
-const getPermissionsByRoleAndModule = async (userSessionEncrypt) => {
-  let data = decryptCrypt(userSessionEncrypt);
-  const response = await GetPermissionsByRoleAndModuleExecute(data);
+const getPermissionsByRoleAndModule = async (userSession) => {
+
+  const response = await GetPermissionsByRoleAndModuleExecute(userSession);
   if (!response) {
     return false;
   } else {

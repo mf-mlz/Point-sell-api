@@ -2,6 +2,9 @@ const connection = require("../../../config/database");
 const {
   registerSalesProducts,
 } = require("../../salesProducts/repositories/salesProductsRepository");
+const {
+  getEmployeeIdByName,
+} = require("../../employees/repositories/employeesRepository");
 
 const registerSales = async (sale) => {
   try {
@@ -39,7 +42,7 @@ const registerSales = async (sale) => {
     const totalAmount = arryProducts.reduce((accumulator, item) => {
       return accumulator + item.quantity * item.total;
     }, 0);
-    
+
     const resultInsertSale = await insertSale(sale, totalAmount, arryProducts);
     return resultInsertSale;
   } catch (error) {
@@ -48,58 +51,78 @@ const registerSales = async (sale) => {
 };
 
 /* Function Insert Sale */
-const insertSale = (sale, totalAmount, arryProducts) => {
-  return new Promise((resolve, reject) => {
-    const customerId = sale.customerId ? sale.customerId : null;
-    const query =
-      "INSERT INTO sales (date, totalAmount, payment, amount, changeAmount, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    const date = sale.date;
-    const formattedDate = date.toISOString().split("T")[0] + " 00:00:00";
-    const values = [
-      formattedDate,
-      totalAmount,
-      sale.payment,
-      sale.amount,
-      sale.changeAmount,
-      sale.dataPayment,
-      customerId,
-      sale.employeesId,
-      sale.status,
-    ];
+const insertSale = async (sale, totalAmount, arryProducts) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const customerId = sale.customerId || null;
 
-    connection.query(query, values, async (error, results) => {
-      if (error) {
-        return reject(error);
-      }
+      // Verificar employeesRepository y obtener el ID del empleado
+      const employeesId = await getEmployeeIdByName(sale.employees);
+      
+      const query =
+        "INSERT INTO sales (date, totalAmount, payment, amount, changeAmount, dataPayment, customerId, employeesId, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      
+      const date = sale.date;
+      const formattedDate = date.toISOString().split("T")[0] + " 00:00:00";
+      const values = [
+        formattedDate,
+        totalAmount,
+        sale.payment,
+        sale.amount,
+        sale.changeAmount,
+        sale.dataPayment,
+        customerId,
+        employeesId[0].id,
+        sale.status,
+      ];
 
-      const saleId = results.insertId;
-
-      try {
-        const productPromises = arryProducts.map((product) => {
-          const dataSaleProducts = {
-            salesId: saleId,
-            productId: product.productId,
-            quantity: product.quantity,
-            total: product.total,
-          };
-
-          return registerSalesProducts(dataSaleProducts);
-        });
-
-        await Promise.all(productPromises);
-
-        for (const product of sale.products) {
-          const q = "CALL update_stock(?, ?);";
-          const v = [product.code, product.quantity];
-          await queryDatabase(q, v);
+      connection.query(query, values, async (error, results) => {
+        if (error) {
+          return reject(error);
         }
-        resolve(saleId);
-      } catch (error) {
-        reject(error);
-      }
-    });
+
+        const saleId = results.insertId;
+
+        try {
+          // Verificar que arryProducts sea un arreglo antes de mapear
+          if (!Array.isArray(arryProducts)) {
+            throw new Error("arryProducts debe ser un arreglo");
+          }
+
+          const productPromises = arryProducts.map((product) => {
+            const dataSaleProducts = {
+              salesId: saleId,
+              productId: product.productId,
+              quantity: product.quantity,
+              total: product.total,
+            };
+            return registerSalesProducts(dataSaleProducts);
+          });
+
+          await Promise.all(productPromises);
+
+          // Verificar que sale.products sea un arreglo antes de iterar
+          if (!Array.isArray(sale.products)) {
+            throw new Error("sale.products debe ser un arreglo");
+          }
+
+          for (const product of sale.products) {
+            const q = "CALL update_stock(?, ?);";
+            const v = [product.code, product.quantity];
+            await queryDatabase(q, v);
+          }
+          
+          resolve(saleId);
+        } catch (error) {
+          reject(error);
+        }
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 };
+
 
 // Función auxiliar para realizar consultas a la base de datos
 const queryDatabase = (query, values) => {

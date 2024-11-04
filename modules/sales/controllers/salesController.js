@@ -7,7 +7,7 @@ const registerSales = async (req, res) => {
     "date",
     "payment",
     "dataPayment",
-    "employeesId",
+    "employees",
     "status",
   ];
   const data = req.body;

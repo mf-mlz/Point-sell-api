@@ -20,8 +20,8 @@ const filterPermissions = (data) => {
     return permissionsRepository.filterPermissions(data);
 };
 
-const getPermissionsByRoleAndModule = (userSessionEncrypt) => {
-    return permissionsRepository.getPermissionsByRoleAndModule(userSessionEncrypt);
+const getPermissionsByRoleAndModule = (userSession) => {
+    return permissionsRepository.getPermissionsByRoleAndModule(userSession);
 };
 
 const getModuleAccessByRole = (sessionEmployee) => {

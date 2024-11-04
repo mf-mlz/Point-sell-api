@@ -6,6 +6,8 @@ const { verifyRootUser } = require('../../../middlewares/adminMiddleware');
 const { validateEmployee, validateEmployeeFilter, validateID, validateEmployeeFilterAll } = require('../../../middlewares/validatorsEmployees');
 
 router.get('/', verifyToken, employeesController.getAllEmployees);
+router.get('/getDataSession', verifyToken, employeesController.returnDataSession);
+router.get('/getModulesSession', verifyToken, employeesController.returnModuleSession);
 
 router.post('/register', verifyToken, verifyRootUser, validateEmployee, employeesController.registerEmployees);
 router.post('/logout', employeesController.logout);
