@@ -15,7 +15,7 @@ const registerClients = (client) => {
 
 const getAllClients = () => {
     return new Promise((resolve, reject) => {
-        connection.query('SELECT * FROM clients', (error, results) => {
+        connection.query('SELECT * FROM clients WHERE status = "Active"', (error, results) => {
             if (error) return reject(error);
             resolve(results);
         });
@@ -38,7 +38,7 @@ const getClient = (data) => {
             keys = keys.substring(0, keys.length - 2);
         }
 
-        const query = 'SELECT * FROM clients WHERE ' + keys;
+        const query = 'SELECT * FROM clients WHERE  ' + keys + ' and status = "Active"';
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);
@@ -63,10 +63,10 @@ const putClients = (client) => {
     });
 };
 
-const deleteClient = (client) => {
+const deleteClient = (id) => {
     return new Promise((resolve, reject) => {
-        const query = 'DELETE FROM clients WHERE id= ?';
-        const values = [client.id];
+        const query = 'UPDATE clients SET status = "Deleted" WHERE id = ?';
+        const values = [id];
 
         connection.query(query, values, (error, results) => {
             if (error) return reject(error);

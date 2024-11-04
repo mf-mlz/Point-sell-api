@@ -10,6 +10,6 @@ router.get('/', verifyToken, clientController.getAllClients);
 router.post('/register', verifyToken, verifyRootUser, validateClient, clientController.registerClients);
 router.get('/filter', verifyToken, validateClientFilter, clientController.filterClients);
 router.put('/edit', verifyToken, validateID, validateClient, verifyRootUser, clientController.putClients);
-router.delete('/delete', verifyToken, validateID, verifyRootUser, clientController.deleteClient);
+router.delete('/delete/:id', verifyToken, validateID, verifyRootUser, clientController.deleteClient);
 
 module.exports = router;

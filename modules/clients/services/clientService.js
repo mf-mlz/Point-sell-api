@@ -16,8 +16,8 @@ const putClients = (data) => {
     return clientsRepository.putClients(data);
 };
 
-const deleteClient = (data) => {
-    return clientsRepository.deleteClient(data);
+const deleteClient = (id) => {
+    return clientsRepository.deleteClient(id);
 };
 
 module.exports = {

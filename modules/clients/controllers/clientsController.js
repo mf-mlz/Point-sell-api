@@ -81,22 +81,10 @@ const putClients = async (req, res) => {
 
 const deleteClient = async (req, res) => {
 
-    const requiredFields = ['id'];
-    const data = req.body;
-
-    const missingField = verifyData(requiredFields, data);
-    if (missingField) {
-        return res.status(400).json({ error: `El campo ${missingField} es requerido` });
-    }
-
-    const { id } = data;
-
+    const id = req.params.id;
     try {
-
-        delete data.employeeId;
-        const deleteClientServices = await clientsService.deleteClient(data);
-        res.status(201).json({ message: deleteClientServices });
-
+        const deleteClientServices = await clientsService.deleteClient(id);
+        res.status(200).json({ message: deleteClientServices });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
