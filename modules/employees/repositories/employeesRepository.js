@@ -7,7 +7,7 @@ const registerEmployees = (employee) => {
     const values = [
       employee.name,
       employee.email,
-      process.env.PASS_TEMP+employee.password,
+      employee.password,
       employee.phone,
       employee.address,
       employee.role_id,
