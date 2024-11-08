@@ -25,7 +25,7 @@ const registerSalesProducts = async (req, res) => {
     data.total = parseFloat(productPrice) * parseFloat(quantity);
     const registerSalesProductsService =
       await salesProductsService.registerSalesProducts(data);
-      return res.status(201).json({ message: registerSalesProductsService });
+    return res.status(201).json({ message: registerSalesProductsService });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -121,7 +121,7 @@ const deleteSalesProducts = async (req, res) => {
   try {
     const deleteSalesProductsServices =
       await salesProductsService.deleteSalesProducts(data);
-      return res.status(201).json({ message: deleteSalesProductsServices });
+    return res.status(201).json({ message: deleteSalesProductsServices });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -167,6 +167,9 @@ const generateTicket = async (req, res) => {
     const minutes = dateCurrently.getMinutes();
     const seconds = dateCurrently.getSeconds();
     const employee = dataTicket[0].employee;
+    const status = dataTicket[0].status === "1" ? "Aprobada" : "Rechazada";
+
+    const rejection_reason = dataTicket[0].rejection_reason;
     const cardNumber =
       dataTicket[0].paymentForm !== "Efectivo"
         ? formarCardNumber(dataTicket[0].dataPayment)
@@ -186,26 +189,32 @@ const generateTicket = async (req, res) => {
       .fontSize(10)
       .text(
         `Fecha Impresión: ${day}/${month}/${year} ${hour}:${minutes}:${seconds}`,
-        40,
+        30,
         115
       );
 
+    doc.fontSize(10).text(`Estatus Venta: ${status}`, 30, 140);
+
+    if (status === "Rechazada") {
+      doc.fontSize(10).text(`Motivo Rechazo: ${rejection_reason}`, 30, 150);
+    }
+
     /* Products */
-    addCenteredText(doc, "Productos", 130);
+    addCenteredText(doc, "Productos", 180);
 
     /* Header Products Table */
     doc
       .moveDown()
       .fontSize(10)
-      .text("Concepto", 20, 155)
-      .text("Cantidad", 120, 155)
-      .text("Unitario", 180, 155)
-      .text("Total", 240, 155);
+      .text("Concepto", 20, 195)
+      .text("Cantidad", 120, 195)
+      .text("Unitario", 180, 195)
+      .text("Total", 240, 195);
 
     /* Data Products */
     let yPosition = 0;
     dataTicket.forEach((producto, index) => {
-      yPosition = 170 + index * 20;
+      yPosition = 205 + index * 20;
 
       doc
         .fontSize(10)
@@ -274,34 +283,40 @@ const generateTicket = async (req, res) => {
 
     /* Footer */
     let positionY = doc.y;
-    addCenteredText(doc, "¡GRACIAS POR TU COMPRA!", positionY + 20);
-    doc
-      .moveDown()
-      .fontSize(8)
-      .text(
-        `Si deseas facturar tu compra, por favor, solicítalo directamente al Gerente en tienda o al Cajero. Recuerda que, de acuerdo con las normativas del SAT México 4.0, tienes un plazo máximo de 30 días después de la compra para realizar tu solicitud de factura. Para poder facturar, asegúrate de tener a la mano tu ticket de compra y proporciona los datos fiscales necesarios. Si tienes alguna duda sobre el proceso, no dudes en preguntar a nuestro personal, quienes estarán encantados de ayudarte. ¡Gracias por tu preferencia!`,
-        20,
-        positionY + 40
-      );
+    const messageFinal =
+      status === "Rechazada" ? "¡VENTA RECHAZADA!" : "¡GRACIAS POR TU COMPRA!";
+    addCenteredText(doc, messageFinal, positionY + 20);
 
-    doc
-      .moveDown()
-      .fontSize(8)
-      .text(
-        `La Reproducción apocrifa de este comprobante constituye en un delito en los términos de las disposiciones fiscales. Este comprobante tendrá vigencia de 2 años apartir de la Fecha de aprobación la Venta, la cual se remarca en el inicio de este comprobante de venta (Fecha y Hora)"`,
-        20,
-        doc.y + 20
-      );
+    if (status === "Aprobada") {
+      doc
+        .moveDown()
+        .fontSize(8)
+        .text(
+          `Si deseas facturar tu compra, por favor, solicítalo directamente al Gerente en tienda o al Cajero. Recuerda que, de acuerdo con las normativas del SAT México 4.0, tienes un plazo máximo de 30 días después de la compra para realizar tu solicitud de factura. Para poder facturar, asegúrate de tener a la mano tu ticket de compra y proporciona los datos fiscales necesarios. Si tienes alguna duda sobre el proceso, no dudes en preguntar a nuestro personal, quienes estarán encantados de ayudarte. ¡Gracias por tu preferencia!`,
+          20,
+          positionY + 40
+        );
 
-    addCenteredText(doc, "Pago en una sola Exhibición", doc.y + 20);
+      doc
+        .moveDown()
+        .fontSize(8)
+        .text(
+          `La Reproducción apocrifa de este comprobante constituye en un delito en los términos de las disposiciones fiscales. Este comprobante tendrá vigencia de 2 años apartir de la Fecha de aprobación la Venta, la cual se remarca en el inicio de este comprobante de venta (Fecha y Hora)"`,
+          20,
+          doc.y + 20
+        );
 
-    try {
-      const url = process.env.URL_SALE + id.toString();
-      await addQrToPdf(doc, url);
-      doc.end();
-    } catch (error) {
-      console.error(error);
+      addCenteredText(doc, "Pago en una sola Exhibición", doc.y + 20);
+
     }
+
+      try {
+        const url = process.env.URL_SALE + id.toString();
+        await addQrToPdf(doc, url, status);
+        doc.end();
+      } catch (error) {
+      }
+    
 
     /* Headers => To Download */
     res.setHeader("Content-Type", "application/pdf");
@@ -351,7 +366,7 @@ function formatDateAndHour(dateString) {
 }
 
 /* Function Add QR Ticket */
-async function addQrToPdf(doc, id) {
+async function addQrToPdf(doc, id, status) {
   return new Promise((resolve, reject) => {
     QRCode.toDataURL(id, { errorCorrectionLevel: "H" }, (err, url) => {
       if (err) return reject(err);
@@ -359,8 +374,10 @@ async function addQrToPdf(doc, id) {
       const base64Data = url.split(",")[1];
       const buffer = Buffer.from(base64Data, "base64");
 
-      // Agregar imagen QR al PDF
-      doc.image(buffer, { width: 100, align: "center", valign: "center" });
+      if(status === 'Aprobada'){
+        doc.image(buffer, { width: 100, align: "center", valign: "center" });
+      }
+      
       resolve();
     });
   });
