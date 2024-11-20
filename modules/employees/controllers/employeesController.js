@@ -113,8 +113,8 @@ const login = async (req, res) => {
         password,
         employeeData[0].password
       );
-
-      if (verifyPassword) {
+      
+      if (verifyPassword[0]) {
         /* Get Modules */
         const modules = await modulesController.getModuleAccessByRoleReturn(
           encryptCrypt(JSON.stringify({ role_name: employeeData[0].role_name }))
@@ -135,9 +135,9 @@ const login = async (req, res) => {
         const serviceSms =
           process.env.NODE_ENV === "development"
             ? {
-                status: true,
-                message: `Código Enviado con Éxito al número: ******4090`,
-              }
+              status: true,
+              message: `Código Enviado con Éxito al número: ******4090`,
+            }
             : await sendSms(employeeData[0].phone, code);
 
         if (process.env.NODE_ENV === "development") {
@@ -151,6 +151,7 @@ const login = async (req, res) => {
             message: serviceSms.message,
             data: payloadEncrypt,
             code: codeEncrypt,
+            vali: verifyPassword[1]
           });
         } else {
           res.status(500).json({
