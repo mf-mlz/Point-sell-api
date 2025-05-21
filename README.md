@@ -5,6 +5,7 @@ Cuenta con las siguientes funcionalidades clave:
 - Gestión de Clientes: Registro y control de información de los clientes.
 - Gestión de Empleados: Administración del personal, roles y permisos.
 - Gestión de Productos: Control de productos con alertas de stock mínimo.
+- Gestión de Permisos: Control y generación de módulos mediante roles y permisos.
 - Facturación Electrónica: Genera facturas electrónicas automáticamente utilizando FacturAPI.
 - Notificaciones: Sistema de alertas en tiempo real.
 - Chat Interno: Comunicación instantánea entre empleados para mejorar la colaboración.
