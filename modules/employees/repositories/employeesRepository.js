@@ -7,7 +7,7 @@ const registerEmployees = (employee) => {
     const values = [
       employee.name,
       employee.email,
-      process.env.PASS_TEMP+employee.password,
+      employee.password,
       employee.phone,
       employee.address,
       employee.role_id,
@@ -16,6 +16,26 @@ const registerEmployees = (employee) => {
     connection.query(query, values, (error, results) => {
       if (error) return reject(error);
       resolve("Empleado Registrado Correctamente:");
+    });
+  });
+};
+
+const checkEmailSend = (data) => {
+  return new Promise((resolve, reject) => {
+    const email = data.email;
+    const type = data.type;
+
+    connection.query("SET @resultado = NULL", () => {
+      connection.query(
+        "CALL CheckAndInsertEmailLog(?, ?, @resultado)",
+        [email, type],
+        () => {
+          connection.query("SELECT @resultado AS resultado", (err, results) => {
+            if (err) throw err;
+            resolve(results[0].resultado);
+          });
+        }
+      );
     });
   });
 };
@@ -60,8 +80,8 @@ const getEmployee = (data) => {
 
 const getEmployeeEmail = (data) => {
   return new Promise((resolve, reject) => {
-
-    const query = 'SELECT e.id, e.email FROM `employees` as e where e.email = ? and status = "Active";';
+    const query =
+      'SELECT e.id, e.email, e.name FROM `employees` as e where e.email = ? and status = "Active";';
     const values = [data.email];
 
     connection.query(query, values, (error, results) => {
@@ -69,7 +89,6 @@ const getEmployeeEmail = (data) => {
       const result = JSON.parse(JSON.stringify(results));
       resolve(result);
     });
-
   });
 };
 
@@ -84,6 +103,19 @@ const getEmployeeAll = (data) => {
       const result = JSON.parse(JSON.stringify(results));
       resolve(result);
     });
+  });
+};
+
+const getEmailLogStatusById = (id) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      "CALL getEmailLogStatusById(?)",
+      [id],
+      (error, results) => {
+        if (error) return reject(error);
+        resolve(results[0]);
+      }
+    );
   });
 };
 
@@ -118,13 +150,38 @@ const deleteEmployee = (id) => {
   });
 };
 
-const putEmployeesPs = (employee) => {
+const putEmployeesPs = (employee, idLog) => {
   return new Promise((resolve, reject) => {
-    const query = "UPDATE employees SET password= ? WHERE id= ?";
-    const values = [employee.password, employee.id];
-    connection.query(query, values, (error, results) => {
-      if (error) return reject(error);
-      resolve("Usuario Modificado Correctamente");
+    const updateEmployeeQuery =
+      "UPDATE employees SET password = ? WHERE id = ?";
+    const updateEmailLogQuery =
+      "UPDATE email_logs SET status = 'Used' WHERE id = ?";
+
+    connection.beginTransaction((err) => {
+      if (err) return reject(err);
+
+      connection.query(
+        updateEmployeeQuery,
+        [employee.password, employee.id],
+        (error1) => {
+          if (error1) {
+            return connection.rollback(() => reject(error1));
+          }
+
+          connection.query(updateEmailLogQuery, [idLog], (error2) => {
+            if (error2) {
+              return connection.rollback(() => reject(error2));
+            }
+
+            connection.commit((errCommit) => {
+              if (errCommit) {
+                return connection.rollback(() => reject(errCommit));
+              }
+              resolve("Contraseña Actualizada correctamente");
+            });
+          });
+        }
+      );
     });
   });
 };
@@ -138,14 +195,49 @@ const getEmployeeIdByName = (id) => {
   });
 };
 
+const putEmployeePhoto = (product) => {
+  return new Promise((resolve, reject) => {
+    const now = new Date();
+    const query = "UPDATE employees SET photo= ?, updated_at= ? WHERE id= ?";
+    const values = [product.photo, product.updated_at, product.id];
+
+    connection.query(query, values, (error, results) => {
+      if (error) return reject(error);
+      resolve("Archivo Subido con Éxito");
+    });
+  });
+};
+
+const putUpdateEmailLogToken = (data) => {
+  return new Promise((resolve, reject) => {
+    const id = data.id;
+    const token = data.token;
+
+    connection.query(
+      "CALL UpdateEmailLogToken(?, ?)",
+      [id, token],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(true);
+      }
+    );
+  });
+};
+
 module.exports = {
   getAllEmployees,
+  checkEmailSend,
   registerEmployees,
   getEmployee,
   getEmployeeEmail,
   getEmployeeAll,
+  getEmailLogStatusById,
   putEmployees,
   deleteEmployee,
   putEmployeesPs,
-  getEmployeeIdByName
+  getEmployeeIdByName,
+  putEmployeePhoto,
+  putUpdateEmailLogToken,
 };

@@ -5,7 +5,7 @@ const path = require('path');
 const { createUpdatetAtShort } = require('../utils/helpers');
 const requestIp = require('request-ip');
 const express = require('express');
-const app = express(); // Si ya tienes un archivo principal, esto no es necesario aquí.
+const app = express();
 
 const projectRoot = path.resolve(__dirname, '../');
 const logDirectory = path.join(projectRoot, 'logs');

@@ -5,7 +5,7 @@ const { verifyToken } = require('../../../middlewares/authMiddleware');
 const { verifyRootUser } = require('../../../middlewares/adminMiddleware');
 const { validateID, validatePermissions, validatePermissionsFilter } = require('../../../middlewares/validatorsPermissions');
 
-router.get('/', verifyToken, verifyRootUser, modulesController.getAllModules);
+router.get('/', verifyToken, modulesController.getAllModules);
 router.get('/getModulesAndSubmodules', verifyToken, verifyRootUser, modulesController.getAllModulesAndSubmodules);
  router.get('/getPermissionsByRole', verifyToken, modulesController.getPermissionsByRoleAndModule);
  router.get('/getModuleAccessByRole', verifyToken, modulesController.getModuleAccessByRole);
