@@ -8,6 +8,9 @@ const path = require("path");
 const { encryptCrypt, decryptCrypt } = require("../../../utils/crypto-js");
 const nodemailer = require("nodemailer");
 const { sendSms, generateCodeAuthSms } = require("../../../services/twilio");
+const { emitNotification } = require("../../../services/sockets");
+const { v4: uuidv4 } = require("uuid");
+const sessionsService = require("../../sessions/services/sessionsService");
 
 /* Key ECDSA (ES256) */
 const pKey = fs.readFileSync(path.join(process.cwd(), process.env.KN), "utf8");
@@ -117,6 +120,17 @@ const login = async (req, res) => {
       );
 
       if (verifyPassword) {
+        /* Verify Session Active */
+        const sessionActive = await sessionsService.findSessionByEmployeeId(
+          employeeData[0].id
+        );
+
+        if (sessionActive.length > 0) {
+          return res.status(403).json({
+            message: "Ya cuentas con una sesión activa en otro dispositivo.",
+          });
+        }
+
         /* Get Modules */
         const modules = await modulesController.getModuleAccessByRoleReturn(
           encryptCrypt(JSON.stringify({ role_name: employeeData[0].role_name }))
@@ -203,10 +217,20 @@ const verifyCode = async (req, res) => {
       const dataDecrypt = decryptCrypt(data.data);
       const temp = data.temp;
 
+      /* Save Session */
+      await sessionsService.saveSession(dataDecrypt.id, uuidv4());
+
       delete dataDecrypt.id;
       res.status(200).json({
         message: "Inicio de Sesión Exitoso",
         temp: temp,
+      });
+
+      /* Init Socket */
+      emitNotification({
+        type: "login",
+        message: `${dataDecrypt.name} inició sesión`,
+        icon: dataDecrypt.photo_name ?? "success",
       });
     } else {
       /* Code Not Success */
@@ -267,8 +291,23 @@ const deleteEmployee = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+  let userSessionEncrypt = req.body.sessionData;
+  userSessionEncrypt = userSessionEncrypt
+    ? userSessionEncrypt.replace(/['"]+/g, "")
+    : null;
+  const data = decryptCrypt(userSessionEncrypt);
+  await sessionsService.deleteSessionByEmployeeId(data.id);
+  console.log(data);
+  
+
   res.clearCookie("token");
   res.json({ message: "Sesión Finalizada" });
+
+  emitNotification({
+    type: "logout",
+    message: `${data.name} se ha desconectado`,
+    icon: data.photo_name ?? "info",
+  });
 };
 
 const recoverPassword = async (req, res) => {
@@ -286,7 +325,6 @@ const recoverPassword = async (req, res) => {
   };
 
   const checkEmailSend = await employeesService.checkEmailSend(dataLog);
-  console.log(checkEmailSend);
 
   if (checkEmailSend > 0) {
     const paylod = {

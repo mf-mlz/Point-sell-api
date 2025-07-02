@@ -21,7 +21,7 @@ const paymentsFormRoutes = require("./modules/paymentsForm/routes/paymentsFormRo
 
 const { requestLogger } = require("./middlewares/logMiddleware");
 const validator = require("./services/jwt");
-const { initSocket } = require("./services/notifySocket");
+const { initSocket } = require("./services/sockets");
 
 const dotenv = require("dotenv");
 const envFile =
@@ -43,7 +43,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production" ? "https://localhost:4200" : "http://localhost:4200",
+    origin: "http://localhost:4200",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "session-employee", "module-role"],
     credentials: true,

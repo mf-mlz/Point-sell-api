@@ -18,13 +18,13 @@ function initSocket(server) {
   });
 }
 
-function emitirNotificacion(data) {
+function emitNotification(data) {
   if (io) {
-    io.emit('nueva-notificacion', data);
+    io.emit('notify', data);
   }
 }
 
 module.exports = {
   initSocket,
-  emitirNotificacion,
+  emitNotification,
 };
